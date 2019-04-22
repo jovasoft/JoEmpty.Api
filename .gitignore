@@ -331,3 +331,4 @@ ASALocalRun/
 
 #appsettings.json
 API/API/appsettings.json
+API/API/appsettings.Development.json
