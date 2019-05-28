@@ -1,6 +1,6 @@
 ﻿using Business.Abstract;
 using DataAccess.Abstract;
-using Entites;
+using Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
