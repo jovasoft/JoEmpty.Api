@@ -9,8 +9,7 @@ using System.Text;
 
 namespace DataAccess.Concrete
 {
-    public class EntityRepositoryBase<TEntity, TContext> : IEntityRepository<TEntity> where TEntity : class, IEntity, new()
-                                                                                       where TContext : DbContext, new()
+    public class EntityRepositoryBase<TEntity, TContext> : IEntityRepository<TEntity> where TEntity : class, IEntity, new() where TContext : DbContext, new()
     {
         public void Add(TEntity entity)
         {

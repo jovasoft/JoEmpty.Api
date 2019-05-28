@@ -6,20 +6,8 @@ using System.Threading.Tasks;
 
 namespace API.Models
 {
-    public class UserModel
+    public class LoginModel
     {
-        [Required]
-        [DataType(DataType.Text)]
-        [MaxLength(20)]
-        [MinLength(3)]
-        public string FirstName { get; set; }
-
-        [Required]
-        [DataType(DataType.Text)]
-        [MaxLength(20)]
-        [MinLength(3)]
-        public string LastName { get; set; }
-
         [Required]
         [DataType(DataType.Password)]
         [MaxLength(32)]
@@ -32,7 +20,5 @@ namespace API.Models
         [MaxLength(20)]
         [MinLength(3)]
         public string Mail { get; set; }
-
-        public string Token { get; set; }
     }
 }
