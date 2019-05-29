@@ -17,7 +17,7 @@ namespace API.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "this page autherized.", "user 2" };
+            return new string[] { "this page autherized.", "rebuild is ok" };
         }
 
         // GET: api/Users/5
