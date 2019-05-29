@@ -69,6 +69,7 @@ namespace API
                     }
                 };
             });
+
             services.AddScoped<IAuthService, AuthManager>();
             services.AddScoped<IItemService, ItemManager>();
             services.AddScoped<IUserDal, UserDal>();
@@ -93,7 +94,6 @@ namespace API
 
             app.UseAuthentication();
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
