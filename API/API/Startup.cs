@@ -58,6 +58,16 @@ namespace API
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+
+                x.Events = new JwtBearerEvents()
+                {
+                    OnTokenValidated = (context) =>
+                    {
+                        var name = context.Principal.Identity.Name;
+                        if (string.IsNullOrEmpty(name)) context.Fail("Unauthorized. Please re-login.");
+                        return Task.CompletedTask;
+                    }
+                };
             });
             services.AddScoped<IAuthService, AuthManager>();
             services.AddScoped<IItemService, ItemManager>();
