@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using DataAccess.Abstract;
 using Entities;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,9 +17,14 @@ namespace Business.Concrete
             this.itemDal = itemDal;
         }
 
+        public void Add(Item item)
+        {
+            itemDal.Add(item);
+        }
+
         public void Delete(Guid id)
         {
-             itemDal.Delete(itemDal.Get(x => x.Id == id));
+             itemDal.Delete(itemDal.Get(x => x.Id== id));
         }
 
         public Item Get(Guid id)
@@ -26,17 +32,21 @@ namespace Business.Concrete
             return itemDal.Get(x => x.Id == id);
         }
 
-        public void Post(Item item)
+        public List<Item> GetList(Guid userId)
         {
-            itemDal.Add(item);
+            return itemDal.GetList(x => x.UserId == userId);
         }
 
-        public bool Put(Item item)
+        public List<Item> GetList()
+        {
+            return itemDal.GetList();
+        }
+
+        public bool Update(Item item)
         {
             itemDal.Update(item);
 
             return true;
         }
-
     }
 }
