@@ -15,17 +15,34 @@ namespace API.Controllers
     public class ItemsController : ControllerBase
     {
         private IItemService itemService;
+        private IUserService userService;
 
-        public ItemsController(IItemService itemService)
+        public ItemsController(IItemService itemService, IUserService userService)
         {
             this.itemService = itemService;
+            this.userService = userService;
         }
 
         // GET: api/Items
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(/*itemService.GetList()*/);
+            User user = userService.Get(User.Identity.Name);
+            List<ItemModel> itemModels = new List<ItemModel>();
+            ItemModel itemModel = new ItemModel();
+            List<Item> userItems = itemService.GetList(user.Id);
+
+            foreach (var userItem in userItems)
+            {
+                itemModel.Id = userItem.Id;
+                itemModel.Name = userItem.Name;
+                itemModel.Desc = userItem.Desc;
+                itemModel.CreateDate = userItem.CreateDate;
+
+                itemModels.Add(itemModel);
+            }
+
+            return Ok(itemModels);
         }
 
         // GET: api/Items/5
@@ -35,8 +52,9 @@ namespace API.Controllers
             if (id != Guid.Empty)
             {
                 Item item = itemService.Get(id);
+                ItemModel itemModel = new ItemModel { Name = item.Name , Desc = item.Desc, CreateDate = item.CreateDate, Id = item.Id};
 
-                return Ok(item);
+                return Ok(itemModel);
             }
 
             return BadRequest();
@@ -49,10 +67,12 @@ namespace API.Controllers
 
             if (ModelState.IsValid)
             {
-                Item item = new Item { Name = itemModel.Name, Desc = itemModel.Desc, CreateDate = itemModel.CreateDate };
+                User user = userService.Get(User.Identity.Name);
+
+                Item item = new Item { Name = itemModel.Name, Desc = itemModel.Desc, CreateDate = itemModel.CreateDate, UserId = user.Id};
                 itemService.Add(item);
 
-                return Ok(itemModel);
+                return Ok(new { status = "success" });
             }
 
             return BadRequest();
@@ -64,15 +84,16 @@ namespace API.Controllers
         {
             if (ModelState.IsValid)
             {
-                //User User = userService.Get(User.Identity.Name);
+                User user = userService.Get(User.Identity.Name);
 
-                //item = itemService.Get(id);
-                //item.Name = itemModel.Name;
-                //item.UserId = itemModel.UserId;
-                //item.Desc = itemModel.Desc;
-                //item.CreateDate = itemModel.CreateDate;
+                Item item = itemService.Get(user.Id);
+                item.Name = itemModel.Name;
+                item.UserId = user.Id;
+                item.Desc = itemModel.Desc;
+                item.CreateDate = itemModel.CreateDate;
+                itemService.Update(item);
 
-                //return Ok(itemService.Update(item));
+                return Ok(new { status = "success" });
             }
 
             return BadRequest();
@@ -85,7 +106,7 @@ namespace API.Controllers
             if (id != Guid.Empty)
             {
                 itemService.Delete(id);
-                return Ok();
+                return Ok(new { status = "success" });
             }
 
             return BadRequest();

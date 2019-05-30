@@ -9,6 +9,11 @@ namespace API.Models
     public class ItemModel
     {
         [Required]
+        [MaxLength(100)]
+        [MinLength(3)]
+        public Guid Id { get; set; }
+
+        [Required]
         [DataType(DataType.Text)]
         [MaxLength(100)]
         [MinLength(3)]
