@@ -17,27 +17,36 @@ namespace Business.Concrete
             this.itemDal = itemDal;
         }
 
-        public void Delete(int id)
-        {
-             itemDal.Delete(itemDal.Get(x => x.Id == id));
-        }
-
-        public Item Get(int id)
-        {
-            return itemDal.Get(x => x.Id == id);
-        }
-
-        public void Post([FromBody] Item item)
+        public void Add(Item item)
         {
             itemDal.Add(item);
         }
 
-        public bool Put([FromBody] Item item)
+        public void Delete(Guid id)
+        {
+             itemDal.Delete(itemDal.Get(x => x.Id== id));
+        }
+
+        public Item Get(Guid id)
+        {
+            return itemDal.Get(x => x.Id == id);
+        }
+
+        public List<Item> GetList(Guid userId)
+        {
+            return itemDal.GetList(x => x.UserId == userId);
+        }
+
+        public List<Item> GetList()
+        {
+            return itemDal.GetList();
+        }
+
+        public bool Update(Item item)
         {
             itemDal.Update(item);
 
             return true;
         }
-
     }
 }

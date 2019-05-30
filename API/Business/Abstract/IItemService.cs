@@ -1,14 +1,20 @@
 ﻿using Entities;
-using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 
 namespace Business.Abstract
 {
     public interface IItemService
     {
-        void Post([FromBody]Item item);
-        Item Get(int id);
-        void Delete(int id);
-        bool Put([FromBody]Item item);
+        void Add(Item item);
+
+        Item Get(Guid id);
+
+        void Delete(Guid id);
+
+        bool Update(Item item);
+
+        List<Item> GetList(Guid userId);
 
     }
 }
