@@ -72,6 +72,7 @@ namespace API
 
             services.AddScoped<IAuthService, AuthManager>();
             services.AddScoped<IItemService, ItemManager>();
+            services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IItemDal, ItemDal>();
 

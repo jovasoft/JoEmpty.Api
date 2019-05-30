@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Models;
 using Business.Abstract;
@@ -28,7 +29,8 @@ namespace API.Controllers
         public IActionResult Get()
         {
             User user = userService.Get(User.Identity.Name);
-            return Ok(user);
+            UserModel userModel = new UserModel { FirstName = user.FirstName, LastName = user.LastName, Mail = user.Mail };
+            return Ok(userModel);
         }
 
         // PUT: api/User
@@ -52,7 +54,6 @@ namespace API.Controllers
         public IActionResult Delete()
         {
             User user = userService.Get(User.Identity.Name);
-
             userService.Delete(user);
 
             return Ok(new { status = "success" });
