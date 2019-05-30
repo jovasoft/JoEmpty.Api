@@ -33,14 +33,14 @@ namespace API.Controllers
 
             if (user == null) return BadRequest(new { message = "Mail or password is incorrect." });
 
-            UserModel userModel = new UserModel { FirstName = user.FirstName, LastName = user.LastName, Mail = user.Mail, Token = user.Token };
+            RegisterModel userModel = new RegisterModel { FirstName = user.FirstName, LastName = user.LastName, Mail = user.Mail, Token = user.Token };
 
             return Ok(userModel);
         }
 
         // POST: api/auth/register
         [HttpPost("register")]
-        public IActionResult Register([FromBody] UserModel userModel)
+        public IActionResult Register([FromBody] RegisterModel userModel)
         {
             if (ModelState.IsValid)
             {
