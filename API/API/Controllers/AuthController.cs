@@ -65,12 +65,5 @@ namespace API.Controllers
             }
             else return BadRequest();
         }
-
-        // POST: api/auth/logout
-        [HttpGet("logout")]
-        public IActionResult Logout()
-        {
-            return Ok();
-        }
     }
 }

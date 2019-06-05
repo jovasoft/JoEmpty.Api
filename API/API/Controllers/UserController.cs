@@ -29,6 +29,8 @@ namespace API.Controllers
         public IActionResult Get()
         {
             User user = userService.Get(User.Identity.Name);
+            if (user == null) return NotFound(new { status = "error", message = "user not found." });
+
             UserModel userModel = new UserModel { FirstName = user.FirstName, LastName = user.LastName, Mail = user.Mail };
             return Ok(userModel);
         }
@@ -37,26 +39,62 @@ namespace API.Controllers
         [HttpPut]
         public IActionResult Put([FromBody] UserModel userModel)
         {
-            User user = userService.Get(User.Identity.Name);
+            if (ModelState.IsValid)
+            {
+                User user = userService.Get(User.Identity.Name);
+                if (user == null) return NotFound(new { status = "error", message = "user not found." });
 
-            if (string.IsNullOrEmpty(userModel.FirstName)) user.FirstName = userModel.FirstName;
-            if (string.IsNullOrEmpty(userModel.LastName)) user.LastName = userModel.LastName;
-            if (string.IsNullOrEmpty(userModel.Password)) user.Password = userModel.Password;
-            if (string.IsNullOrEmpty(userModel.Mail)) user.Mail = userModel.Mail;
+                bool isUpdated = false;
 
-            userService.Update(user);
+                if (!string.IsNullOrEmpty(userModel.FirstName) && userModel.FirstName != user.FirstName) { user.FirstName = userModel.FirstName; isUpdated = true; }
+                if (!string.IsNullOrEmpty(userModel.LastName) && userModel.LastName != user.LastName) { user.LastName = userModel.LastName; isUpdated = true; }
+                if (!string.IsNullOrEmpty(userModel.Password) && userModel.Password != user.Password) { user.Password = userModel.Password; isUpdated = true; }
+                if (!string.IsNullOrEmpty(userModel.Mail) && userModel.Mail != user.Mail) { user.Mail = userModel.Mail; isUpdated = true; }
 
-            return Ok(new { status = "success" });
+                if (isUpdated) userService.Update(user);
+
+                return Ok(new { status = "success" });
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost("changePassword")]
+        public IActionResult ChangePassword([FromBody] ChangePasswordModel changePasswordModel)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = userService.Get(User.Identity.Name);
+                if (user == null) return NotFound(new { status = "error", message = "user not found." });
+
+                changePasswordModel.OldPassword = Core.Helpers.Encryption.Calculate(changePasswordModel.OldPassword);
+                changePasswordModel.NewPassword = Core.Helpers.Encryption.Calculate(changePasswordModel.NewPassword);
+
+                bool isChanged = userService.ChangePassword(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
+
+                if (isChanged)
+                    return Ok(new { status = "success" });
+                else
+                    return Ok(new { status = "failed", message = "Wrong old password." });
+            }
+
+            return BadRequest();
         }
 
         // DELETE: api/User
         [HttpDelete]
-        public IActionResult Delete()
+        public IActionResult Delete([FromBody] string password)
         {
             User user = userService.Get(User.Identity.Name);
-            userService.Delete(user);
+            if (user == null) return NotFound(new { status = "error", message = "user not found." });
 
-            return Ok(new { status = "success" });
+            if (user.Password == Core.Helpers.Encryption.Calculate(password))
+            {
+                userService.Delete(user);
+                return Ok(new { status = "success" });
+            }
+            else
+                return Ok(new { status = "failed", message = "wrong password." });
         }
     }
 }

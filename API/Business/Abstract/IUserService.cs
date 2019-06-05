@@ -11,6 +11,8 @@ namespace Business.Abstract
 
         void Update(User user);
 
+        bool ChangePassword(User user, string oldPassword, string newPassword);
+
         void Delete(User user);
     }
 }

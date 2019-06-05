@@ -30,5 +30,16 @@ namespace Business.Concrete
         {
             userDal.Delete(user);
         }
+
+        public bool ChangePassword(User user, string oldPassword, string newPassword)
+        {
+            if (user.Password != oldPassword) return false;
+
+            user.Password = newPassword;
+
+            Update(user);
+
+            return true;
+        }
     }
 }
