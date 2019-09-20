@@ -48,8 +48,6 @@ namespace API.Controllers
 
                 if (!string.IsNullOrEmpty(userModel.FirstName) && userModel.FirstName != user.FirstName) { user.FirstName = userModel.FirstName; isUpdated = true; }
                 if (!string.IsNullOrEmpty(userModel.LastName) && userModel.LastName != user.LastName) { user.LastName = userModel.LastName; isUpdated = true; }
-                if (!string.IsNullOrEmpty(userModel.Password) && userModel.Password != user.Password) { user.Password = userModel.Password; isUpdated = true; }
-                if (!string.IsNullOrEmpty(userModel.Mail) && userModel.Mail != user.Mail) { user.Mail = userModel.Mail; isUpdated = true; }
 
                 if (isUpdated) userService.Update(user);
 
@@ -58,6 +56,8 @@ namespace API.Controllers
 
             return BadRequest();
         }
+
+        // POST: api/user/changepassword
 
         [HttpPost("changePassword")]
         public IActionResult ChangePassword([FromBody] ChangePasswordModel changePasswordModel)
