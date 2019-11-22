@@ -17,13 +17,13 @@ namespace Entities
         External
     }
 
-    public enum MaintenanceStatuses
+    public enum MaintenanceStatuses : byte
     {
         Active,
         Passive
     }
 
-    public enum UnitTypes
+    public enum UnitTypes : byte
     {
         MR,
         MRL,
