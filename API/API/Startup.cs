@@ -75,7 +75,6 @@ namespace API
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IItemDal, ItemDal>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
