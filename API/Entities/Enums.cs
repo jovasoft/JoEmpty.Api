@@ -23,7 +23,7 @@ namespace Entities
         Passive
     }
 
-    public enum UnitTypes : byte
+    public enum FacilityTypes : byte
     {
         MR,
         MRL,

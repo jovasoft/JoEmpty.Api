@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Models
 {
-    public class UnitModel
+    public class FacilityModel
     {
         public Guid Id { get; set; }
         public Guid ContractId { get; set; }
@@ -18,7 +18,7 @@ namespace API.Models
         public int Capacity { get; set; }
         public DateTime? WarrantyFinishDate { get; set; }
         public MaintenanceStatuses MaintenanceStatus { get; set; }
-        public UnitTypes Type { get; set; }
+        public FacilityTypes Type { get; set; }
         public decimal CurrentMaintenanceFee { get; set; }
         public decimal OldMaintenanceFee { get; set; }
         public decimal BreakdownFee { get; set; }

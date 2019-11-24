@@ -32,13 +32,13 @@ namespace API.Controllers
             {
                 ContractModel contractModel = new ContractModel();
                 contractModel.Id = contract.Id;
-                contractModel.CustomerId = contract.CustomerId;
+                contractModel.ClientId = contract.ClientId;
                 contractModel.Currency = contract.Currency;
                 contractModel.Code = contract.Code;
                 contractModel.Amount = contract.Amount;
                 contractModel.StartDate = contract.StartDate;
                 contractModel.FinishDate = contract.FinishDate;
-                contractModel.UnitCount = contract.UnitCount;
+                contractModel.FacilityCount = contract.FacilityCount;
                 contractModel.Supply = contract.Supply;
 
                 contractModels.Add(contractModel);
@@ -54,7 +54,7 @@ namespace API.Controllers
             if (id != Guid.Empty)
             {
                 Contract contract = contractService.GetContract(id);
-                ContractModel contractModel = new ContractModel { Id = contract.Id, CustomerId = contract.CustomerId, Currency = contract.Currency, Code = contract.Code, Amount = contract.Amount, StartDate = contract.StartDate, FinishDate = contract.FinishDate, Supply = contract.Supply, UnitCount = contract.UnitCount };
+                ContractModel contractModel = new ContractModel { Id = contract.Id, ClientId = contract.ClientId, Currency = contract.Currency, Code = contract.Code, Amount = contract.Amount, StartDate = contract.StartDate, FinishDate = contract.FinishDate, Supply = contract.Supply, FacilityCount = contract.FacilityCount };
 
                 return Ok(contractModel);
             }
@@ -62,27 +62,27 @@ namespace API.Controllers
             return BadRequest();
         }
 
-        // GET: api/Contracts/GetByCustomerContract/
-        [Route("GetByCustomerContract/{customerId}")]
+        // GET: api/Contracts/GetByClientContract/
+        [Route("GetByClientContract/{clientId}")]
         [HttpGet]
-        public IActionResult GetByCustomerContract(Guid customerId)
+        public IActionResult GetByClientContract(Guid clientId)
         {
-            if (customerId != Guid.Empty)
+            if (clientId != Guid.Empty)
             {
-                List<Contract> contracts = contractService.GetCustomerContracts(customerId);
+                List<Contract> contracts = contractService.GetClientContracts(clientId);
                 List<ContractModel> contractModels = new List<ContractModel>();
 
                 foreach (var contract in contracts)
                 {
                     ContractModel contractModel = new ContractModel();
                     contractModel.Id = contract.Id;
-                    contractModel.CustomerId = contract.CustomerId;
+                    contractModel.ClientId = contract.ClientId;
                     contractModel.Currency = contract.Currency;
                     contractModel.Code = contract.Code;
                     contractModel.Amount = contract.Amount;
                     contractModel.StartDate = contract.StartDate;
                     contractModel.FinishDate = contract.FinishDate;
-                    contractModel.UnitCount = contract.UnitCount;
+                    contractModel.FacilityCount = contract.FacilityCount;
                     contractModel.Supply = contract.Supply;
 
                     contractModels.Add(contractModel);
@@ -115,7 +115,7 @@ namespace API.Controllers
             if (ModelState.IsValid)
             {
 
-                Contract contract = new Contract { CustomerId = contractModel.CustomerId, Currency = contractModel.Currency, Code = contractModel.Code, Amount = contractModel.Amount, StartDate = contractModel.StartDate, FinishDate = contractModel.FinishDate, Supply = contractModel.Supply, UnitCount = contractModel.UnitCount };
+                Contract contract = new Contract { ClientId = contractModel.ClientId, Currency = contractModel.Currency, Code = contractModel.Code, Amount = contractModel.Amount, StartDate = contractModel.StartDate, FinishDate = contractModel.FinishDate, Supply = contractModel.Supply, FacilityCount = contractModel.FacilityCount };
                 contractService.Add(contract);
 
                 return Ok(new { status = "success" });
@@ -124,7 +124,7 @@ namespace API.Controllers
             return BadRequest();
         }
 
-        // PUT: api/Customers/5
+        // PUT: api/Clients/5
         [HttpPut("{id}")]
         public IActionResult Put([FromBody] ContractModel contractModel)
         {
@@ -133,13 +133,13 @@ namespace API.Controllers
 
                 Contract contract = contractService.GetContract(contractModel.Id);
                 contract.Id = contractModel.Id;
-                contract.CustomerId = contractModel.CustomerId;
+                contract.ClientId = contractModel.ClientId;
                 contract.Currency = contractModel.Currency;
                 contract.Code = contractModel.Code;
                 contract.Amount = contractModel.Amount;
                 contract.StartDate = contractModel.StartDate;
                 contract.FinishDate = contractModel.FinishDate;
-                contract.UnitCount = contractModel.UnitCount;
+                contract.FacilityCount = contractModel.FacilityCount;
                 contract.Supply = contractModel.Supply;
                 contractService.Update(contract);
 
