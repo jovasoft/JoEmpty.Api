@@ -9,7 +9,7 @@ namespace Entities
     {
         public Guid Id { get; set; }
         public Guid PersonalId { get; set; }
-        public Guid UnitId { get; set; }
+        public Guid FacilityId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

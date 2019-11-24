@@ -11,7 +11,7 @@ namespace Business.Abstract
 
         Contract GetContract(Guid contractId);
 
-        List<Contract> GetCustomerContracts(Guid customerId);
+        List<Contract> GetClientContracts(Guid clientId);
 
         void Delete(Guid contractId);
 

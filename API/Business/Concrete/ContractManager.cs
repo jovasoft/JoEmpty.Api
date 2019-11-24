@@ -32,9 +32,9 @@ namespace Business.Concrete
             return contractDal.Get(x => x.Id == contractId);
         }
 
-        public List<Contract> GetCustomerContracts(Guid customerId)
+        public List<Contract> GetClientContracts(Guid clientId)
         {
-            return contractDal.GetList(x => x.CustomerId == customerId);
+            return contractDal.GetList(x => x.ClientId == clientId);
         }
 
         public List<Contract> GetList()
