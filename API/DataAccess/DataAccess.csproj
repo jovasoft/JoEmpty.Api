@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20191122201839_CustomersTable.cs" />
+    <Compile Remove="Migrations\20191122201839_CustomersTable.Designer.cs" />
+    <Compile Remove="Migrations\20191122204812_CustomersTables.cs" />
+    <Compile Remove="Migrations\20191122204812_CustomersTables.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />

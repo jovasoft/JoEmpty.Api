@@ -15,6 +15,12 @@ namespace DataAccess.Concrete
     {
         public DbSet<Item> Items { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<CustomerContact> CustomerContacts { get; set; }
+        public DbSet<Contract> Contracts { get; set; }
+        public DbSet<Unit> Units { get; set; }
+        public DbSet<Area> Areas { get; set; }
+
         public readonly AppSettings appSettings;
 
         public PostgresContext()

@@ -71,10 +71,18 @@ namespace API
             });
 
             services.AddScoped<IAuthService, AuthManager>();
+            services.AddScoped<IUnitService, UnitMaganer>();
+            services.AddScoped<IContractService, ContractManager>();
+            services.AddScoped<ICustomerService, CustomerManager>();
             services.AddScoped<IItemService, ItemManager>();
+            services.AddScoped<ICustomerContactService, CustomerContactManager>();
             services.AddScoped<IUserService, UserManager>();
+            services.AddScoped<ICustomerDal, CustomerDal>();
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IItemDal, ItemDal>();
+            services.AddScoped<ICustomerContactDal, CustomerContactDal>();
+            services.AddScoped<IContractDal, ContractDal>();
+            services.AddScoped<IUnitDal, UnitDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
