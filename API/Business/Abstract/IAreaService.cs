@@ -11,6 +11,8 @@ namespace Business.Abstract
 
         void Delete(Guid id);
 
+        Area Get(Guid id);
+
         bool Update(Area area);
 
         List<Area> GetList();
