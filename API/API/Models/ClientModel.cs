@@ -22,6 +22,7 @@ namespace API.Models
         {
             return new ClientModel
             {
+                Id = client.Id,
                 Note = client.Note,
                 Title = client.Title,
                 Address = client.Address,

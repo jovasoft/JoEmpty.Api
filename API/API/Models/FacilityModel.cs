@@ -23,7 +23,11 @@ namespace API.Models
         public string Address { get; set; }
 
         [Required]
+        [Range(1, 6)]
         public FacilityTypes Type { get; set; }
+
+        [Range(1, 2)]
+        public MaintenanceStatuses MaintenanceStatus { get; set; }
 
         [Required]
         public decimal CurrentMaintenanceFee { get; set; }
@@ -35,7 +39,6 @@ namespace API.Models
         public int Speed { get; set; }
         public int Capacity { get; set; }
         public DateTime? WarrantyFinishDate { get; set; }
-        public MaintenanceStatuses MaintenanceStatus { get; set; }
         public decimal OldMaintenanceFee { get; set; }
         public string Brand { get; set; }
 

@@ -22,7 +22,7 @@ namespace API.Controllers
         }
 
         // GET: api/ClientsContact/clientId
-        [HttpGet("clientId")]
+        [HttpGet("{clientId}")]
         public IActionResult Get(Guid clientId)
         {
             if (clientId == Guid.Empty) return NotFound();
@@ -39,7 +39,7 @@ namespace API.Controllers
         }
 
         // GET: api/ClientsContact/GetOne/id
-        [HttpGet("{id}")]
+        [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -85,7 +85,9 @@ namespace API.Controllers
 
             clientContactService.Update(clientContact);
 
-            return Accepted(clientContactModel);
+            ClientContactModel accepted = ClientContactModel.DtoToModel(clientContact);
+
+            return Accepted(accepted);
         }
 
         // DELETE: api/ClientsContact/id
@@ -93,6 +95,10 @@ namespace API.Controllers
         public IActionResult Delete(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
+
+            ClientContact clientContact = clientContactService.Get(id);
+
+            if (clientContact == null) return NotFound();
 
             clientContactService.Delete(id);
 

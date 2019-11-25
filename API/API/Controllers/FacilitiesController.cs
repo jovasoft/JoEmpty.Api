@@ -15,10 +15,12 @@ namespace API.Controllers
     public class FacilitiesController : ControllerBase
     {
         private IFacilityService facilityService;
+        private IContractService contractService;
 
-        public FacilitiesController(IFacilityService facilityService)
+        public FacilitiesController(IFacilityService facilityService, IContractService contractService)
         {
             this.facilityService = facilityService;
+            this.contractService = contractService;
         }
 
         // GET: api/Facilities
@@ -37,7 +39,7 @@ namespace API.Controllers
         }
 
         // GET: api/Facilities/GetByFacilityId/id
-        [HttpGet("{id}")]
+        [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -50,7 +52,7 @@ namespace API.Controllers
         }
 
         // GET: api/Facilities/GetByContractFacilities/contractId
-        [HttpGet("{contractId}")]
+        [HttpGet("GetByContractFacilities/{contractId}")]
         public IActionResult GetByContractFacilities(Guid contractId)
         {
             if (contractId == Guid.Empty) return NotFound();
@@ -72,6 +74,21 @@ namespace API.Controllers
         {
             if (facilityModel.ContractId == Guid.Empty) return NotFound();
 
+            if (!string.IsNullOrEmpty(facilityModel.Code))
+            {
+                Facility isExists = facilityService.Get(facilityModel.Code);
+
+                if (isExists != null) return BadRequest();
+            }
+
+            Contract contract = contractService.Get(facilityModel.ContractId);
+
+            if (contract == null) return NotFound();
+
+            int facilityCount = facilityService.GetList(facilityModel.ContractId).Count;
+
+            if (facilityCount == contract.FacilityCount) return BadRequest();
+
             Facility facility = FacilityModel.ModelToDto(facilityModel);
             facilityService.Add(facility);
 
@@ -92,7 +109,14 @@ namespace API.Controllers
 
             if (!string.IsNullOrEmpty(facilityModel.Address)) facility.Address = facilityModel.Address;
             if (!string.IsNullOrEmpty(facilityModel.Brand)) facility.Brand = facilityModel.Brand;
-            if (!string.IsNullOrEmpty(facilityModel.Code)) facility.Code = facilityModel.Code;
+            if (!string.IsNullOrEmpty(facilityModel.Code))
+            {
+                Facility isExists = facilityService.Get(facilityModel.Code);
+
+                if (isExists != null && id != isExists.Id) return BadRequest();
+
+                facility.Code = facilityModel.Code;
+            }
             if (!string.IsNullOrEmpty(facilityModel.Name)) facility.Name = facilityModel.Name;
             if (facilityModel.WarrantyFinishDate != null) facility.WarrantyFinishDate = facilityModel.WarrantyFinishDate;
             if (facilityModel.AreaId != Guid.Empty) facility.AreaId = facilityModel.AreaId;
@@ -108,7 +132,9 @@ namespace API.Controllers
 
             facilityService.Update(facility);
 
-            return Accepted(facilityModel);
+            FacilityModel accepted = FacilityModel.DtoToModel(facility);
+
+            return Accepted(accepted);
         }
 
         // DELETE: api/Facilities/5
@@ -116,6 +142,10 @@ namespace API.Controllers
         public IActionResult Delete(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
+
+            Facility facility = facilityService.Get(id);
+
+            if (facility == null) return NotFound();
 
             facilityService.Delete(id);
 

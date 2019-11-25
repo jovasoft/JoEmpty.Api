@@ -32,6 +32,11 @@ namespace Business.Concrete
             return contractDal.Get(x => x.Id == contractId);
         }
 
+        public Contract Get(string code)
+        {
+            return contractDal.Get(x => x.Code == code);
+        }
+
         public List<Contract> GetList(Guid clientId)
         {
             return contractDal.GetList(x => x.ClientId == clientId);

@@ -72,19 +72,25 @@ namespace API
                 };
             });
             #endregion
-            
+
             #region ioc
+            services.AddScoped<IClientService, ClientManager>();
             services.AddScoped<IAuthService, AuthManager>();
             services.AddScoped<IFacilityService, FacilityMaganer>();
             services.AddScoped<IContractService, ContractManager>();
-            services.AddScoped<IClientService, ClientManager>();
             services.AddScoped<IClientContactService, ClientContactManager>();
             services.AddScoped<IUserService, UserManager>();
+            services.AddScoped<IPersonalService, PersonalManager>();
+            services.AddScoped<IAreaService, AreaManager>();
+
+
             services.AddScoped<IClientDal, ClientDal>();
             services.AddScoped<IUserDal, UserDal>();
             services.AddScoped<IClientContactDal, ClientContactDal>();
             services.AddScoped<IContractDal, ContractDal>();
             services.AddScoped<IFacilityDal, FacilityDal>();
+            services.AddScoped<IPersonalDal, PersonalDal>();
+            services.AddScoped<IAreaDal, AreaDal>();
             #endregion
         }
 

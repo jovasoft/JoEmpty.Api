@@ -36,7 +36,7 @@ namespace API.Controllers
         }
 
         // GET: api/Personals/GetOne/id
-        [HttpGet("{id}")]
+        [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -77,7 +77,9 @@ namespace API.Controllers
 
             personalService.Update(personal);
 
-            return Accepted(personalModel);
+            PersonalModel accepted = PersonalModel.DtoToModel(personal);
+
+            return Accepted(accepted);
         }
 
         // DELETE: api/Personals/5
@@ -85,6 +87,10 @@ namespace API.Controllers
         public IActionResult Delete(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
+
+            Personal personal = personalService.Get(id);
+
+            if (personal == null) return NotFound();
 
             personalService.Delete(id);
 

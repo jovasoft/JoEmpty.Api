@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         // GET: api/Clients/id/5
-        [HttpGet("{id}")]
+        [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -49,10 +49,17 @@ namespace API.Controllers
             return Ok(ClientModel.DtoToModel(client));
         }
 
-        // POST: api/Clients                    
+        // POST: api/Clients
         [HttpPost]
         public IActionResult Post([FromBody] ClientModel clientModel)
         {
+            if (!string.IsNullOrEmpty(clientModel.CurrentCode))
+            {
+                Client isExists = clientService.Get(clientModel.CurrentCode);
+
+                if (isExists != null) return BadRequest();
+            }
+
             Client client = ClientModel.ModelToDto(clientModel);
             clientService.Add(client);
 
@@ -67,16 +74,24 @@ namespace API.Controllers
         {
             if (id == Guid.Empty) return NotFound();
 
-            Client client = clientService.Get(clientModel.Id);
+            Client client = clientService.Get(id);
 
             if (client == null) return NotFound();
 
-            if (!string.IsNullOrEmpty(clientModel.CurrentCode)) client.CurrentCode = clientModel.CurrentCode;
+            if (!string.IsNullOrEmpty(clientModel.CurrentCode))
+            {
+                Client isExists = clientService.Get(clientModel.CurrentCode);
+
+                if (isExists != null && id != isExists.Id) return BadRequest();
+
+                client.CurrentCode = clientModel.CurrentCode;
+            }
             if (!string.IsNullOrEmpty(clientModel.Address)) client.Address = clientModel.Address;
             if (!string.IsNullOrEmpty(clientModel.Note)) client.Note = clientModel.Note;
             if (!string.IsNullOrEmpty(clientModel.Title)) client.Title = clientModel.Title;
                
             clientService.Update(client);
+
             ClientModel accepted = ClientModel.DtoToModel(client);
 
             return Accepted(accepted);
@@ -87,6 +102,10 @@ namespace API.Controllers
         public IActionResult Delete(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
+
+            Client client = clientService.Get(id);
+
+            if (client == null) return NotFound();
 
             clientService.Delete(id);
 

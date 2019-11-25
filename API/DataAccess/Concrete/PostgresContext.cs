@@ -19,6 +19,7 @@ namespace DataAccess.Concrete
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Facility> Facilities { get; set; }
         public DbSet<Area> Areas { get; set; }
+        public DbSet<Personal> Personals { get; set; }
 
         public readonly AppSettings appSettings;
 

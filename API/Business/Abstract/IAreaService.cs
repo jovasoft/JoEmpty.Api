@@ -13,6 +13,8 @@ namespace Business.Abstract
 
         Area Get(Guid id);
 
+        Area Get(string code);
+
         bool Update(Area area);
 
         List<Area> GetList();

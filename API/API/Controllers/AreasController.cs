@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         // GET: api/Areas/GetOne/5
-        [HttpGet("{id}")]
+        [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -53,9 +53,15 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] AreaModel areaModel)
         {
-
             if (areaModel.PersonalId == Guid.Empty) return NotFound();
-          
+
+            if (!string.IsNullOrEmpty(areaModel.Code))
+            {
+                Area isExists = areaService.Get(areaModel.Code);
+
+                if (isExists != null) return BadRequest();
+            }
+
             Area area = AreaModel.ModelToDto(areaModel);
             areaService.Add(area);
 
@@ -70,16 +76,24 @@ namespace API.Controllers
         {
             if (id == Guid.Empty) return NotFound();
 
-            Area area = areaService.Get(areaModel.Id);
+            Area area = areaService.Get(id);
 
             if (area == null) return NotFound();
             
             if (Guid.Empty == areaModel.PersonalId) area.PersonalId = areaModel.PersonalId;
-            if (!string.IsNullOrEmpty(areaModel.Code)) area.Code = areaModel.Code;
+            if (!string.IsNullOrEmpty(areaModel.Code))
+            {
+                Area isExists = areaService.Get(areaModel.Code);
+
+                if (isExists != null && id != isExists.Id) return BadRequest();
+
+                area.Code = areaModel.Code;
+            }
             if (!string.IsNullOrEmpty(areaModel.Name)) area.Name = areaModel.Name;
             if (!string.IsNullOrEmpty(areaModel.Name)) area.Description = areaModel.Description;
 
             areaService.Update(area);
+
             AreaModel accepted = AreaModel.DtoToModel(area);
 
             return Accepted(accepted);
@@ -92,10 +106,13 @@ namespace API.Controllers
         {
             if (id == Guid.Empty) return NotFound();
 
+            Area area = areaService.Get(id);
+
+            if (area == null) return NotFound();
+
             areaService.Delete(id);
 
             return NoContent();
-            
         }
     }
 }

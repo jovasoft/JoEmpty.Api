@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         // GET: api/Contracts/5
-        [HttpGet("{id}")]
+        [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -50,8 +50,7 @@ namespace API.Controllers
         }
 
         // GET: api/Contracts/GetByClientContracts/clientId
-        [Route("{clientId}")]
-        [HttpGet]
+        [HttpGet("GetByClientContracts/{clientId}")]
         public IActionResult GetByClientContracts(Guid clientId)
         {
             List<Contract> contracts = contractService.GetList(clientId);
@@ -70,6 +69,15 @@ namespace API.Controllers
         public IActionResult Post([FromBody] ContractModel contractModel)
         {
             if (contractModel.ClientId == Guid.Empty) return NotFound();
+
+            if (contractModel.StartDate > contractModel.FinishDate) return BadRequest();
+
+            if (!string.IsNullOrEmpty(contractModel.Code))
+            {
+                Contract isExists = contractService.Get(contractModel.Code);
+
+                if (isExists != null) return BadRequest();
+            }
 
             Contract contract = ContractModel.ModelToDto(contractModel);
             contractService.Add(contract);
@@ -90,7 +98,15 @@ namespace API.Controllers
             if(contract == null) return NotFound();
 
             if (Guid.Empty == contractModel.ClientId) contract.ClientId = contractModel.ClientId;
-            if (!string.IsNullOrEmpty(contractModel.Code)) contract.Code = contractModel.Code;
+            if (!string.IsNullOrEmpty(contractModel.Code))
+            {
+                Contract isExists = contractService.Get(contractModel.Code);
+
+                if (isExists != null && id != isExists.Id) return BadRequest();
+
+                contract.Code = contractModel.Code;
+            }
+
             if (contractModel.StartDate != null) contract.StartDate = contractModel.StartDate;
             if (contractModel.FinishDate != null) contract.FinishDate = contractModel.FinishDate;
             if (contractModel.FacilityCount > 0) contract.FacilityCount = contractModel.FacilityCount;
@@ -101,6 +117,7 @@ namespace API.Controllers
             if (contractModel.StartDate > contractModel.FinishDate) return BadRequest();
 
             contractService.Update(contract);
+
             ContractModel accepted = ContractModel.DtoToModel(contract);
 
             return Accepted(accepted);
@@ -111,6 +128,10 @@ namespace API.Controllers
         public IActionResult Delete(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
+
+            Contract contract = contractService.Get(id);
+
+            if (contract == null) return NotFound();
 
             contractService.Delete(id);
 

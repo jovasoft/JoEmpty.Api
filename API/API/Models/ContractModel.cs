@@ -25,9 +25,11 @@ namespace API.Models
         public int FacilityCount { get; set; }
 
         [Required]
+        [Range(1, 3)]
         public Currencies Currency { get; set; }
 
         [Required]
+        [Range(1, 2)]
         public Supplies Supply { get; set; }
 
         [Required]
@@ -37,6 +39,7 @@ namespace API.Models
         {
             return new ContractModel
             {
+                Id = contract.Id,
                 ClientId = contract.ClientId,
                 Currency = contract.Currency,
                 Code = contract.Code,

@@ -31,6 +31,11 @@ namespace Business.Concrete
             return areaDal.Get(x => x.Id == id);
         }
 
+        public Area Get(string code)
+        {
+            return areaDal.Get(x => x.Code == code);
+        }
+
         public List<Area> GetList()
         {
             return areaDal.GetList();

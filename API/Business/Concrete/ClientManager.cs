@@ -30,6 +30,11 @@ namespace Business.Concrete
             return clientDal.Get(x => x.Id == id);
         }
 
+        public Client Get(string currentCode)
+        {
+            return clientDal.Get(x => x.CurrentCode == currentCode);
+        }
+
         public List<Client> GetList()
         {
             return clientDal.GetList();
