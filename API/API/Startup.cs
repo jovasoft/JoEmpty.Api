@@ -78,12 +78,10 @@ namespace API
             services.AddScoped<IFacilityService, FacilityMaganer>();
             services.AddScoped<IContractService, ContractManager>();
             services.AddScoped<IClientService, ClientManager>();
-            services.AddScoped<IItemService, ItemManager>();
             services.AddScoped<IClientContactService, ClientContactManager>();
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IClientDal, ClientDal>();
             services.AddScoped<IUserDal, UserDal>();
-            services.AddScoped<IItemDal, ItemDal>();
             services.AddScoped<IClientContactDal, ClientContactDal>();
             services.AddScoped<IContractDal, ContractDal>();
             services.AddScoped<IFacilityDal, FacilityDal>();

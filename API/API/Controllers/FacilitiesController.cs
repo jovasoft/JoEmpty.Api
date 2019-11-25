@@ -25,142 +25,101 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+            List<Facility> facilities = facilityService.GetList();
+
+            if (facilities == null || facilities.Count == 0) return NotFound();
+
             List<FacilityModel> facilityModels = new List<FacilityModel>();
-            List<Facility> unists = facilityService.GetList();
 
-            foreach (var facility in unists)
-            {
-                FacilityModel facilityModel = new FacilityModel();
-                facilityModel.Id = facility.Id;
-                facilityModel.ContractId = facility.ContractId;
-                facilityModel.Code = facility.Code;
-                facilityModel.Capacity = facility.Capacity;
-                facilityModel.BreakdownFee = facility.BreakdownFee;
-                facilityModel.Brand = facility.Brand;
-                facilityModel.Address = facility.Address;
-                facilityModel.CurrentMaintenanceFee = facility.CurrentMaintenanceFee;
-                facilityModel.MaintenanceStatus = facility.MaintenanceStatus;
-                facilityModel.OldMaintenanceFee = facility.OldMaintenanceFee;
-                facilityModel.Name = facility.Name;
-                facilityModel.Speed = facility.Speed;
-                facilityModel.Station = facility.Station;
-                facilityModel.Type = facility.Type;
-                facilityModel.WarrantyFinishDate = facility.WarrantyFinishDate;
-
-                facilityModels.Add(facilityModel);
-            }
+            facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
 
             return Ok(facilityModels);
         }
 
-        // GET: api/Facilities/GetByFacilityId/5
-        [Route("GetByFacilityId/{id}")]
-        [HttpGet]
-        public IActionResult GetByFacilityId(Guid id)
+        // GET: api/Facilities/GetByFacilityId/id
+        [HttpGet("{id}")]
+        public IActionResult GetOne(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                Facility facility = facilityService.GetByFacilityId(id);
-                FacilityModel facilityModel = new FacilityModel {Id = facility.Id ,ContractId = facility.ContractId, Code = facility.Code, Capacity = facility.Capacity, BreakdownFee = facility.BreakdownFee, Brand = facility.Brand, Address = facility.Address, CurrentMaintenanceFee = facility.CurrentMaintenanceFee, MaintenanceStatus = facility.MaintenanceStatus, OldMaintenanceFee = facility.OldMaintenanceFee, Name = facility.Name, Speed = facility.Speed, Station = facility.Station, Type = facility.Type, WarrantyFinishDate = facility.WarrantyFinishDate };
+            if (id == Guid.Empty) return NotFound();
 
-                return Ok(facilityModel);
-            }
+            Facility facility = facilityService.Get(id);
 
-            return BadRequest();
+            if (facility == null) return NotFound();
+
+            return Ok(FacilityModel.DtoToModel(facility));
         }
 
-        // GET: api/Facilities/GetByClientContract/5
-        [Route("GetByContractId/{contractId}")]
-        [HttpGet]
-        public IActionResult GetByContractId(Guid contractId)
+        // GET: api/Facilities/GetByContractFacilities/contractId
+        [HttpGet("{contractId}")]
+        public IActionResult GetByContractFacilities(Guid contractId)
         {
+            if (contractId == Guid.Empty) return NotFound();
+
+            List<Facility> facilities = facilityService.GetList(contractId);
+
+            if (facilities == null || facilities.Count == 0) return NotFound();
+
             List<FacilityModel> facilityModels = new List<FacilityModel>();
-            List<Facility> unists = facilityService.GetByContractId(contractId);
 
-            foreach (var facility in unists)
-            {
-                FacilityModel facilityModel = new FacilityModel();
-                facilityModel.Id = facility.Id;
-                facilityModel.ContractId = facility.ContractId;
-                facilityModel.Code = facility.Code;
-                facilityModel.Capacity = facility.Capacity;
-                facilityModel.BreakdownFee = facility.BreakdownFee;
-                facilityModel.Brand = facility.Brand;
-                facilityModel.Address = facility.Address;
-                facilityModel.CurrentMaintenanceFee = facility.CurrentMaintenanceFee;
-                facilityModel.MaintenanceStatus = facility.MaintenanceStatus;
-                facilityModel.OldMaintenanceFee = facility.OldMaintenanceFee;
-                facilityModel.Name = facility.Name;
-                facilityModel.Speed = facility.Speed;
-                facilityModel.Station = facility.Station;
-                facilityModel.Type = facility.Type;
-                facilityModel.WarrantyFinishDate = facility.WarrantyFinishDate;
-
-                facilityModels.Add(facilityModel);
-            }
+            facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
 
             return Ok(facilityModels);
+        }
+
+        // POST: api/Facilities
+        [HttpPost]
+        public IActionResult Post([FromBody] FacilityModel facilityModel)
+        {
+            if (facilityModel.ContractId == Guid.Empty) return NotFound();
+
+            Facility facility = FacilityModel.ModelToDto(facilityModel);
+            facilityService.Add(facility);
+
+            FacilityModel created = FacilityModel.DtoToModel(facility);
+
+            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
+        }
+
+        // PUT: api/Facilities/id
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] FacilityModel facilityModel)
+        {
+            if (id == Guid.Empty) return NotFound();
+
+            Facility facility = facilityService.Get(id);
+
+            if (facility == null) return NotFound();
+
+            if (!string.IsNullOrEmpty(facilityModel.Address)) facility.Address = facilityModel.Address;
+            if (!string.IsNullOrEmpty(facilityModel.Brand)) facility.Brand = facilityModel.Brand;
+            if (!string.IsNullOrEmpty(facilityModel.Code)) facility.Code = facilityModel.Code;
+            if (!string.IsNullOrEmpty(facilityModel.Name)) facility.Name = facilityModel.Name;
+            if (facilityModel.WarrantyFinishDate != null) facility.WarrantyFinishDate = facilityModel.WarrantyFinishDate;
+            if (facilityModel.AreaId != Guid.Empty) facility.AreaId = facilityModel.AreaId;
+            if (facilityModel.ContractId != Guid.Empty) facility.ContractId = facilityModel.ContractId;
+            if (facilityModel.BreakdownFee > 0) facility.BreakdownFee = facilityModel.BreakdownFee;
+            if (facilityModel.Capacity > 0) facility.Capacity = facilityModel.Capacity;
+            if (facilityModel.CurrentMaintenanceFee > 0) facility.CurrentMaintenanceFee = facilityModel.CurrentMaintenanceFee;
+            if (facilityModel.MaintenanceStatus > 0) facility.MaintenanceStatus = facilityModel.MaintenanceStatus;
+            if (facilityModel.OldMaintenanceFee > 0) facility.OldMaintenanceFee = facilityModel.OldMaintenanceFee;
+            if (facilityModel.Speed > 0) facility.Speed = facilityModel.Speed;
+            if (facilityModel.Station > 0) facility.Station = facilityModel.Station;
+            if (facilityModel.Type > 0) facility.Type = facilityModel.Type;
+
+            facilityService.Update(facility);
+
+            return Accepted(facilityModel);
         }
 
         // DELETE: api/Facilities/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                facilityService.Delete(id);
-                return Ok(new { status = "success" });
-            }
+            if (id == Guid.Empty) return NotFound();
 
-            return BadRequest();
-        }
+            facilityService.Delete(id);
 
-        // POST: api/Facilities                    
-        [HttpPost]
-        public IActionResult Post([FromBody] FacilityModel facilityModel)
-        {
-
-            if (ModelState.IsValid)
-            {
-
-                Facility facility = new Facility { ContractId = facilityModel.ContractId, Code = facilityModel.Code, Capacity = facilityModel.Capacity, BreakdownFee = facilityModel.BreakdownFee, Brand = facilityModel.Brand, Address = facilityModel.Address, CurrentMaintenanceFee = facilityModel.CurrentMaintenanceFee, MaintenanceStatus = facilityModel.MaintenanceStatus, OldMaintenanceFee = facilityModel.OldMaintenanceFee, Name = facilityModel.Name, Speed = facilityModel.Speed, Station = facilityModel.Station, Type = facilityModel.Type, WarrantyFinishDate = facilityModel.WarrantyFinishDate };
-                facilityService.Add(facility);
-
-                return Ok(new { status = "success" });
-            }
-
-            return BadRequest();
-        }
-
-        // PUT: api/Facilities/5
-        [HttpPut("{id}")]
-        public IActionResult Put([FromBody] FacilityModel facilityModel)
-        {
-            if (ModelState.IsValid)
-            {
-
-                Facility facility = facilityService.GetByFacilityId(facilityModel.Id);
-                facility.Id = facility.Id;
-                facility.ContractId = facilityModel.ContractId;
-                facility.Code = facilityModel.Code;
-                facility.Capacity = facilityModel.Capacity;
-                facility.BreakdownFee = facilityModel.BreakdownFee;
-                facility.Brand = facilityModel.Brand;
-                facility.Address = facilityModel.Address;
-                facility.CurrentMaintenanceFee = facilityModel.CurrentMaintenanceFee;
-                facility.MaintenanceStatus = facilityModel.MaintenanceStatus;
-                facility.OldMaintenanceFee = facilityModel.OldMaintenanceFee;
-                facility.Name = facilityModel.Name;
-                facility.Speed = facilityModel.Speed;
-                facility.Station = facilityModel.Station;
-                facility.Type = facilityModel.Type;
-                facility.WarrantyFinishDate = facilityModel.WarrantyFinishDate;
-                facilityService.Update(facility);
-
-                return Ok(new { status = "success" });
-            }
-
-            return BadRequest();
+            return NoContent();
         }
     }
 }

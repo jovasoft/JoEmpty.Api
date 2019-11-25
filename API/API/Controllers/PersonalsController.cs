@@ -14,59 +14,81 @@ namespace API.Controllers
     [ApiController]
     public class PersonalsController : ControllerBase
     {
-        private IPersonalService personelService;
-        public PersonalsController(IPersonalService personelService)
+        private IPersonalService personalService;
+        public PersonalsController(IPersonalService personalService)
         {
-            this.personelService = personelService;
+            this.personalService = personalService;
         }
 
         // GET: api/Personals
         [HttpGet]
         public IActionResult Get()
         {
-            List<PersonalModel> personelModels = new List<PersonalModel>();
-            List<Personal> personels = personelService.GetList();
+            List<Personal> personals = personalService.GetList();
 
-            foreach (var personel in personels)
-            {
-                PersonalModel personelModel = new PersonalModel();
-                personelModel.Id = personel.Id;
+            if (personals == null || personals.Count == 0) return NotFound();
 
+            List<PersonalModel> personalModels = new List<PersonalModel>();
 
-                personelModels.Add(personelModel);
-            }
+            personals.ForEach(x => { personalModels.Add(PersonalModel.DtoToModel(x)); });
 
-            return Ok(personelModels);
+            return Ok(personalModels);
         }
 
-        // POST: api/Personals                    
-        [HttpPost]
-        public IActionResult Post([FromBody] PersonalModel personelModel)
+        // GET: api/Personals/GetOne/id
+        [HttpGet("{id}")]
+        public IActionResult GetOne(Guid id)
         {
+            if (id == Guid.Empty) return NotFound();
 
-            if (ModelState.IsValid)
-            {
+            Personal personal = personalService.Get(id);
 
-                Personal personal = new Personal { Id = personelModel.Id};
-                personelService.Add(personal);
+            if (personal == null) return NotFound();
 
-                return Ok(new { status = "success" });
-            }
+            return Ok(PersonalModel.DtoToModel(personal));
+        }
 
-            return BadRequest();
+        // POST: api/Personals
+        [HttpPost]
+        public IActionResult Post([FromBody] PersonalModel personalModel)
+        {
+            //if (personelModel.ClientId == Guid.Empty) return NotFound();
+
+            Personal personal = PersonalModel.ModelToDto(personalModel);
+            personalService.Add(personal);
+
+            PersonalModel created = PersonalModel.DtoToModel(personal);
+
+            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
+        }
+
+        // PUT: api/Personals/id
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] PersonalModel personalModel)
+        {
+            if (id == Guid.Empty) return NotFound();
+
+            Personal personal = personalService.Get(id);
+
+            if (personal == null) return NotFound();
+
+            if (!string.IsNullOrEmpty(personalModel.FirstName)) personal.FirstName = personalModel.FirstName;
+            if (!string.IsNullOrEmpty(personalModel.LastName)) personal.LastName = personalModel.LastName;
+
+            personalService.Update(personal);
+
+            return Accepted(personalModel);
         }
 
         // DELETE: api/Personals/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                personelService.Delete(id);
-                return Ok(new { status = "success" });
-            }
+            if (id == Guid.Empty) return NotFound();
 
-            return BadRequest();
+            personalService.Delete(id);
+
+            return NoContent();
         }
     }
 }

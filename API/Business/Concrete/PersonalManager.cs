@@ -9,26 +9,36 @@ namespace Business.Concrete
 {
     public class PersonalManager : IPersonalService
     {
-        IPersonalDal personelDal;
+        IPersonalDal personalDal;
 
         public PersonalManager(IPersonalDal personelDal)
         {
-            this.personelDal = personelDal;
+            this.personalDal = personelDal;
         }
 
         public void Add(Personal personal)
         {
-            personelDal.Add(personal);
+            personalDal.Add(personal);
+        }
+
+        public Personal Get(Guid id)
+        {
+            return personalDal.Get(x => x.Id == id);
         }
 
         public void Delete(Guid id)
         {
-            personelDal.Delete(personelDal.Get(x => x.Id == id));
+            personalDal.Delete(personalDal.Get(x => x.Id == id));
         }
 
         public List<Personal> GetList()
         {
-            return personelDal.GetList();
+            return personalDal.GetList();
+        }
+
+        public void Update(Personal personal)
+        {
+            personalDal.Update(personal);
         }
     }
 }

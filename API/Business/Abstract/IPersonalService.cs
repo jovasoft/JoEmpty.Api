@@ -12,5 +12,10 @@ namespace Business.Abstract
         void Delete(Guid id);
 
         List<Personal> GetList();
+
+        Personal Get(Guid id);
+
+        void Update(Personal personal);
+
     }
 }

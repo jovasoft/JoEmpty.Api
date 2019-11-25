@@ -32,7 +32,6 @@ namespace API.Models
             };
         }
 
-
         public static Area ModelToDto(AreaModel areaModel)
         {
             return new Area
