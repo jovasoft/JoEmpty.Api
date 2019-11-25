@@ -24,22 +24,14 @@ namespace API.Controllers
         // GET: api/Areas
         [HttpGet]
         public IActionResult Get()
-        {
-            List<AreaModel> areaModels = new List<AreaModel>();
+        { 
             List<Area> areas = areaService.GetList();
 
-            foreach (var area in areas)
-            {
-                AreaModel areaModel = new AreaModel();
-                areaModel.Id = area.Id;
-                areaModel.PersonalId = area.PersonalId;
-                areaModel.FacilityId = area.FacilityId;
-                areaModel.Code = area.Code;
-                areaModel.Name = area.Name;
-                areaModel.Description = area.Description;
+            if (areas == null) return NotFound();
+       
+            List<AreaModel> areaModels = new List<AreaModel>();
 
-                areaModels.Add(areaModel);
-            }
+            areas.ForEach(x => { areaModels.Add(AreaModel.DtoToModel(x)); });
 
             return Ok(areaModels);
         }
@@ -52,7 +44,7 @@ namespace API.Controllers
             if (ModelState.IsValid)
             {
 
-                Area area = new Area { PersonalId = areaModel.PersonalId, FacilityId = areaModel.FacilityId, Code = areaModel.Code, Name = areaModel.Name, Description = areaModel.Description };
+                Area area = AreaModel.ModelToDto(areaModel);
                 areaService.Add(area);
 
                 return Ok(new { status = "success" });

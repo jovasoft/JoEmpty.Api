@@ -8,6 +8,7 @@ namespace API.Models
 {
     public class ClientContactModel
     {
+        
         public Guid Id { get; set; }
         public Guid ClientId { get; set; }
         public string FirstName { get; set; }
