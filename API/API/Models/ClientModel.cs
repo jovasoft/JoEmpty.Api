@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,13 +10,35 @@ namespace API.Models
     public class ClientModel
     {
         public Guid Id { get; set; }
+
         [Required]
         public string Title { get; set; }
-        [Required]
+
         public string Address { get; set; }
-        [Required]
         public string Note { get; set; }
-        [Required]
         public string CurrentCode { get; set; }
+
+        public static ClientModel DtoToModel(Client client)
+        {
+            return new ClientModel
+            {
+                Note = client.Note,
+                Title = client.Title,
+                Address = client.Address,
+                CurrentCode = client.CurrentCode
+            };
+        }
+
+        public static Client ModelToDto(ClientModel clientModel)
+        {
+            return new Client
+            {
+                Id = Guid.NewGuid(),
+                Note = clientModel.Note,
+                Title = clientModel.Title,
+                Address = clientModel.Address,
+                CurrentCode = clientModel.CurrentCode
+            };
+        }
     }
 }

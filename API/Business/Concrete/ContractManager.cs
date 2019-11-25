@@ -27,12 +27,12 @@ namespace Business.Concrete
             contractDal.Delete(contractDal.Get(x => x.Id == id));
         }
 
-        public Contract GetContract(Guid contractId)
+        public Contract Get(Guid contractId)
         {
             return contractDal.Get(x => x.Id == contractId);
         }
 
-        public List<Contract> GetClientContracts(Guid clientId)
+        public List<Contract> GetList(Guid clientId)
         {
             return contractDal.GetList(x => x.ClientId == clientId);
         }

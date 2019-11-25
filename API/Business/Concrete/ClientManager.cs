@@ -20,19 +20,14 @@ namespace Business.Concrete
             clientDal.Add(client);
         }
 
-        public void Delete(string currentCode)
+        public void Delete(Guid id)
         {
-            clientDal.Delete(clientDal.Get(x => x.CurrentCode == currentCode));
+            clientDal.Delete(clientDal.Get(x => x.Id == id));
         }
 
         public Client Get(Guid id)
         {
             return clientDal.Get(x => x.Id == id);
-        }
-
-        public Client Get(string currentCode)
-        {
-            return clientDal.Get(x => x.CurrentCode == currentCode);
         }
 
         public List<Client> GetList()

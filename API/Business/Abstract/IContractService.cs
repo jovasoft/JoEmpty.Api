@@ -9,9 +9,9 @@ namespace Business.Abstract
     {
         void Add(Contract contract);
 
-        Contract GetContract(Guid contractId);
+        Contract Get(Guid contractId);
 
-        List<Contract> GetClientContracts(Guid clientId);
+        List<Contract> GetList(Guid clientId);
 
         void Delete(Guid contractId);
 

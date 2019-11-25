@@ -25,83 +25,46 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            List<ContractModel> contractModels = new List<ContractModel>();
             List<Contract> contracts = contractService.GetList();
 
-            foreach (var contract in contracts)
-            {
-                ContractModel contractModel = new ContractModel();
-                contractModel.Id = contract.Id;
-                contractModel.ClientId = contract.ClientId;
-                contractModel.Currency = contract.Currency;
-                contractModel.Code = contract.Code;
-                contractModel.Amount = contract.Amount;
-                contractModel.StartDate = contract.StartDate;
-                contractModel.FinishDate = contract.FinishDate;
-                contractModel.FacilityCount = contract.FacilityCount;
-                contractModel.Supply = contract.Supply;
+            if(contracts == null || contracts.Count == 0) return NotFound();
 
-                contractModels.Add(contractModel);
-            }
+            List<ContractModel> contractModels = new List<ContractModel>();
+
+            contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
 
             return Ok(contractModels);
         }
 
         // GET: api/Contracts/5
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public IActionResult GetOne(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                Contract contract = contractService.GetContract(id);
-                ContractModel contractModel = new ContractModel { Id = contract.Id, ClientId = contract.ClientId, Currency = contract.Currency, Code = contract.Code, Amount = contract.Amount, StartDate = contract.StartDate, FinishDate = contract.FinishDate, Supply = contract.Supply, FacilityCount = contract.FacilityCount };
+            if (id == Guid.Empty) return NotFound();
 
-                return Ok(contractModel);
-            }
+            Contract contract = contractService.Get(id);
 
-            return BadRequest();
+            if (contract == null) return NotFound();
+
+            return Ok(ContractModel.DtoToModel(contract));
         }
 
-        // GET: api/Contracts/GetByClientContract/
-        [Route("GetByClientContract/{clientId}")]
+        // GET: api/Contracts/GetByClientContracts/
+        [Route("{clientId}")]
         [HttpGet]
-        public IActionResult GetByClientContract(Guid clientId)
+        public IActionResult GetByClientContracts(Guid clientId)
         {
             if (clientId != Guid.Empty)
             {
-                List<Contract> contracts = contractService.GetClientContracts(clientId);
+                List<Contract> contracts = contractService.GetList(clientId);
+
+                if (contracts == null || contracts.Count == 0) return NotFound();
+
                 List<ContractModel> contractModels = new List<ContractModel>();
 
-                foreach (var contract in contracts)
-                {
-                    ContractModel contractModel = new ContractModel();
-                    contractModel.Id = contract.Id;
-                    contractModel.ClientId = contract.ClientId;
-                    contractModel.Currency = contract.Currency;
-                    contractModel.Code = contract.Code;
-                    contractModel.Amount = contract.Amount;
-                    contractModel.StartDate = contract.StartDate;
-                    contractModel.FinishDate = contract.FinishDate;
-                    contractModel.FacilityCount = contract.FacilityCount;
-                    contractModel.Supply = contract.Supply;
-
-                    contractModels.Add(contractModel);
-                }
+                contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
 
                 return Ok(contractModels);
-            }
-
-            return BadRequest();
-        }
-
-        // DELETE: api/BankAccount/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
-        {
-            if (id != Guid.Empty)
-            {
-                contractService.Delete(id);
-                return Ok(new { status = "success" });
             }
 
             return BadRequest();
@@ -112,41 +75,52 @@ namespace API.Controllers
         public IActionResult Post([FromBody] ContractModel contractModel)
         {
 
-            if (ModelState.IsValid)
-            {
+            if (contractModel.ClientId == Guid.Empty) return NotFound();
 
-                Contract contract = new Contract { ClientId = contractModel.ClientId, Currency = contractModel.Currency, Code = contractModel.Code, Amount = contractModel.Amount, StartDate = contractModel.StartDate, FinishDate = contractModel.FinishDate, Supply = contractModel.Supply, FacilityCount = contractModel.FacilityCount };
-                contractService.Add(contract);
+            Contract contract = ContractModel.ModelToDto(contractModel);
+            contractService.Add(contract);
 
-                return Ok(new { status = "success" });
-            }
+            ContractModel created = ContractModel.DtoToModel(contract);
 
-            return BadRequest();
+            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
         }
 
         // PUT: api/Clients/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromBody] ContractModel contractModel)
+        public IActionResult Put(Guid id, [FromBody] ContractModel contractModel)
         {
-            if (ModelState.IsValid)
-            {
+            if (id == Guid.Empty) return NotFound();
 
-                Contract contract = contractService.GetContract(contractModel.Id);
-                contract.Id = contractModel.Id;
-                contract.ClientId = contractModel.ClientId;
-                contract.Currency = contractModel.Currency;
-                contract.Code = contractModel.Code;
-                contract.Amount = contractModel.Amount;
-                contract.StartDate = contractModel.StartDate;
-                contract.FinishDate = contractModel.FinishDate;
-                contract.FacilityCount = contractModel.FacilityCount;
-                contract.Supply = contractModel.Supply;
-                contractService.Update(contract);
+            Contract contract = contractService.Get(id);
 
-                return Ok(new { status = "success" });
-            }
+            if(contract == null) return NotFound();
 
-            return BadRequest();
+            if (Guid.Empty == contractModel.ClientId) contract.ClientId = contractModel.ClientId;
+            if (!string.IsNullOrEmpty(contractModel.Code)) contract.Code = contractModel.Code;
+            if (contractModel.StartDate != null) contract.StartDate = contractModel.StartDate;
+            if (contractModel.FinishDate != null) contract.FinishDate = contractModel.FinishDate;
+            if (contractModel.FacilityCount >= 0) contract.FacilityCount = contractModel.FacilityCount;
+            if (contractModel.Currency > 0) contract.Currency = contractModel.Currency;
+            if (contractModel.Supply > 0) contract.Supply = contractModel.Supply;
+            if (contractModel.Amount >= 0) contract.Amount = contractModel.Amount;
+
+            if (contractModel.StartDate > contractModel.FinishDate) return BadRequest();
+
+            contractService.Update(contract);
+            ContractModel accepted = ContractModel.DtoToModel(contract);
+
+            return Accepted(accepted);
+        }
+
+        // DELETE: api/BankAccount/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            if (id == Guid.Empty) return NotFound();
+
+            contractService.Delete(id);
+
+            return NoContent();
         }
     }
 }

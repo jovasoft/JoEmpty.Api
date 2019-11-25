@@ -36,6 +36,19 @@ namespace API.Controllers
             return Ok(areaModels);
         }
 
+        // GET: api/Areas/GetOne/5
+        [HttpGet("{id}")]
+        public IActionResult GetOne(Guid id)
+        {
+            if (id == Guid.Empty) return NotFound();
+
+            Area area = areaService.Get(id);
+
+            if (area == null) return NotFound();
+
+            return Ok(AreaModel.DtoToModel(area));
+        }
+
         // POST: api/Areas                    
         [HttpPost]
         public IActionResult Post([FromBody] AreaModel areaModel)
@@ -48,7 +61,7 @@ namespace API.Controllers
 
             AreaModel created = AreaModel.DtoToModel(area);
 
-            return CreatedAtAction(nameof(Get), new { Id = area.Id }, created);
+            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
         }
 
         // PUT: api/Areas/5

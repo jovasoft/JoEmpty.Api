@@ -25,52 +25,28 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            List<ClientModel> clientModels = new List<ClientModel>();
             List<Client> clients = clientService.GetList();
 
-            foreach (var client in clients)
-            {
-                ClientModel clientModel = new ClientModel();
-                clientModel.Id = client.Id;
-                clientModel.Note = client.Note;
-                clientModel.Title = client.Title;
-                clientModel.Address = client.Address;
-                clientModel.CurrentCode = client.CurrentCode;
+            if (clients == null || clients.Count == 0 ) return NotFound();
 
-                clientModels.Add(clientModel);
-            }
+            List<ClientModel> clientModels = new List<ClientModel>();
+
+            clients.ForEach(x => { clientModels.Add(ClientModel.DtoToModel(x)); });
 
             return Ok(clientModels);
         }
 
         // GET: api/Clients/id/5
-        [HttpGet("id/{id}")]
-        public IActionResult Get(Guid id)
+        [HttpGet("{id}")]
+        public IActionResult GetOne(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                Client client = clientService.Get(id);
-                ClientModel clientModel = new ClientModel { Title = client.Title, Address = client.Address, Note = client.Note, CurrentCode = client.CurrentCode, Id = client.Id };
+            if (id == Guid.Empty) return NotFound();
 
-                return Ok(clientModel);
-            }
+            Client client = clientService.Get(id);
 
-            return BadRequest();
-        }
+            if (client == null) return NotFound();
 
-        // GET: api/Clients/currentCode/5
-        [HttpGet("currentCode/{currentCode}")]
-        public IActionResult Get(string currentCode)
-        {
-            if (currentCode != string.Empty)
-            {
-                Client client = clientService.Get(currentCode);
-                Client clientModel = new Client { Title = client.Title, Address = client.Address, Note = client.Note, CurrentCode = client.CurrentCode, Id = client.Id };
-
-                return Ok(clientModel);
-            }
-
-            return BadRequest();
+            return Ok(ClientModel.DtoToModel(client));
         }
 
         // POST: api/Clients                    
@@ -78,50 +54,44 @@ namespace API.Controllers
         public IActionResult Post([FromBody] ClientModel clientModel)
         {
 
-            if (ModelState.IsValid)
-            {
-               
-                Client client = new Client { Title = clientModel.Title, Address = clientModel.Address, Note = clientModel.Note, CurrentCode = clientModel.CurrentCode };
-                clientService.Add(client);
+            Client client = ClientModel.ModelToDto(clientModel);
+            clientService.Add(client);
 
-                return Ok(new { status = "success" });
-            }
+            ClientModel created = ClientModel.DtoToModel(client);
 
-            return BadRequest();
+            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
         }
 
         // PUT: api/Clients/5
-        [HttpPut("{currentCode}")]
-        public IActionResult Put([FromBody] ClientModel clientModel)
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] ClientModel clientModel)
         {
-            if (ModelState.IsValid)
-            {
-                
-                Client client = clientService.Get(clientModel.CurrentCode);
-                client.CurrentCode = clientModel.CurrentCode;
-                client.Address = clientModel.Address;
-                client.Note = clientModel.Note;
-                client.Title = clientModel.Title;
-                client.Id = client.Id;
-                clientService.Update(client);
+            if (id == Guid.Empty) return NotFound();
 
-                return Ok(new { status = "success" });
-            }
+            Client client = clientService.Get(clientModel.Id);
 
-            return BadRequest();
+            if (client == null) return NotFound();
+
+            if (!string.IsNullOrEmpty(clientModel.CurrentCode)) client.CurrentCode = clientModel.CurrentCode;
+            if (!string.IsNullOrEmpty(clientModel.Address)) client.Address = clientModel.Address;
+            if (!string.IsNullOrEmpty(clientModel.Note)) client.Note = clientModel.Note;
+            if (!string.IsNullOrEmpty(clientModel.Title)) client.Title = clientModel.Title;
+               
+            clientService.Update(client);
+            ClientModel accepted = ClientModel.DtoToModel(client);
+
+            return Accepted(accepted);
         }
 
         // DELETE: api/Clients/5
-        [HttpDelete("{currentCode}")]
-        public IActionResult Delete(string currentCode)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
         {
-            if (currentCode != string.Empty)
-            {
-                clientService.Delete(currentCode);
-                return Ok(new { status = "success" });
-            }
+            if (id == Guid.Empty) return NotFound();
 
-            return BadRequest();
+            clientService.Delete(id);
+
+            return NoContent();
         }
     }
 }

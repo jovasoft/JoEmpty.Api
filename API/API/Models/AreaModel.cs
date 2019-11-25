@@ -11,10 +11,13 @@ namespace API.Models
     {
         public Guid Id { get; set; }
         public Guid PersonalId { get; set; }
+
         [Required]
         public string Code { get; set; }
+
         [Required]
         public string Name { get; set; }
+
         public string Description { get; set; }
 
         public static AreaModel DtoToModel(Area area)

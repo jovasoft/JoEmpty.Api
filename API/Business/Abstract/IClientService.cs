@@ -11,9 +11,7 @@ namespace Business.Abstract
 
         Client Get(Guid id);
 
-        Client Get(string currentCode);
-
-        void Delete(string currentCode);
+        void Delete(Guid id);
 
         bool Update(Client client);
 
