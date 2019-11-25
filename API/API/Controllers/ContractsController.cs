@@ -49,32 +49,26 @@ namespace API.Controllers
             return Ok(ContractModel.DtoToModel(contract));
         }
 
-        // GET: api/Contracts/GetByClientContracts/
+        // GET: api/Contracts/GetByClientContracts/clientId
         [Route("{clientId}")]
         [HttpGet]
         public IActionResult GetByClientContracts(Guid clientId)
         {
-            if (clientId != Guid.Empty)
-            {
-                List<Contract> contracts = contractService.GetList(clientId);
+            List<Contract> contracts = contractService.GetList(clientId);
 
-                if (contracts == null || contracts.Count == 0) return NotFound();
+            if (contracts == null || contracts.Count == 0) return NotFound();
 
-                List<ContractModel> contractModels = new List<ContractModel>();
+            List<ContractModel> contractModels = new List<ContractModel>();
 
-                contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
+            contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
 
-                return Ok(contractModels);
-            }
-
-            return BadRequest();
+            return Ok(contractModels);
         }
 
-        // POST: api/Contracts                    
+        // POST: api/Contracts
         [HttpPost]
         public IActionResult Post([FromBody] ContractModel contractModel)
         {
-
             if (contractModel.ClientId == Guid.Empty) return NotFound();
 
             Contract contract = ContractModel.ModelToDto(contractModel);
@@ -99,10 +93,10 @@ namespace API.Controllers
             if (!string.IsNullOrEmpty(contractModel.Code)) contract.Code = contractModel.Code;
             if (contractModel.StartDate != null) contract.StartDate = contractModel.StartDate;
             if (contractModel.FinishDate != null) contract.FinishDate = contractModel.FinishDate;
-            if (contractModel.FacilityCount >= 0) contract.FacilityCount = contractModel.FacilityCount;
+            if (contractModel.FacilityCount > 0) contract.FacilityCount = contractModel.FacilityCount;
             if (contractModel.Currency > 0) contract.Currency = contractModel.Currency;
             if (contractModel.Supply > 0) contract.Supply = contractModel.Supply;
-            if (contractModel.Amount >= 0) contract.Amount = contractModel.Amount;
+            if (contractModel.Amount > 0) contract.Amount = contractModel.Amount;
 
             if (contractModel.StartDate > contractModel.FinishDate) return BadRequest();
 

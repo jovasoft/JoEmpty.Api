@@ -53,7 +53,6 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ClientModel clientModel)
         {
-
             Client client = ClientModel.ModelToDto(clientModel);
             clientService.Add(client);
 
