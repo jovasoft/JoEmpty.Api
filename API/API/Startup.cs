@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Business.Concrete;
@@ -37,6 +38,7 @@ namespace API
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; });
 
+            #region jwt-auth
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -69,7 +71,9 @@ namespace API
                     }
                 };
             });
-
+            #endregion
+            
+            #region ioc
             services.AddScoped<IAuthService, AuthManager>();
             services.AddScoped<IFacilityService, FacilityMaganer>();
             services.AddScoped<IContractService, ContractManager>();
@@ -83,6 +87,7 @@ namespace API
             services.AddScoped<IClientContactDal, ClientContactDal>();
             services.AddScoped<IContractDal, ContractDal>();
             services.AddScoped<IFacilityDal, FacilityDal>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

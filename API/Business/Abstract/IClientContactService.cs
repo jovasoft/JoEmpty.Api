@@ -9,12 +9,12 @@ namespace Business.Abstract
     {
         void Add(ClientContact clientContact);
 
-        ClientContact Get(Guid clientId);
+        ClientContact Get(Guid id);
 
-        void Delete(Guid clientId);
+        void Delete(Guid id);
 
-        bool Update(ClientContact clientContact);
+        void Update(ClientContact clientContact);
 
-        List<ClientContact> GetList();
+        List<ClientContact> GetList(Guid clientId);
     }
 }

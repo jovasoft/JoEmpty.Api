@@ -21,26 +21,24 @@ namespace Business.Concrete
             clientContactDal.Add(clientContact);
         }
 
-        public void Delete(Guid clientId)
+        public void Delete(Guid id)
         {
-            clientContactDal.Delete(clientContactDal.Get(x => x.ClientId == clientId));
+            clientContactDal.Delete(clientContactDal.Get(x => x.Id == id));
         }
 
-        public ClientContact Get(Guid clientId)
+        public ClientContact Get(Guid id)
         {
-            return clientContactDal.Get(x => x.ClientId == clientId);
+            return clientContactDal.Get(x => x.Id == id);
         }
 
-        public List<ClientContact> GetList()
+        public List<ClientContact> GetList(Guid clientId)
         {
-            return clientContactDal.GetList();
+            return clientContactDal.GetList(x => x.ClientId == clientId);
         }
 
-        public bool Update(ClientContact clientContact)
+        public void Update(ClientContact clientContact)
         {
             clientContactDal.Update(clientContact);
-
-            return true;
         }
     }
 }

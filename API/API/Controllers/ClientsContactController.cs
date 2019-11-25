@@ -21,105 +21,82 @@ namespace API.Controllers
             this.clientContactService = clientContactService;
         }
 
-        // GET: api/ClientsContact
-        [HttpGet]
-        public IActionResult Get()
+        // GET: api/ClientsContact/clientId
+        [HttpGet("clientId")]
+        public IActionResult Get(Guid clientId)
         {
-            List<ClientContactModel> clientContactModels = new List<ClientContactModel>();
-            List<ClientContact> clientsContact = clientContactService.GetList();
+            if (clientId == Guid.Empty) return NotFound();
 
-            foreach (var clientContact in clientsContact)
-            {
-                ClientContactModel clientContactModel = new ClientContactModel();
-                clientContactModel.Id = clientContact.Id;
-                clientContactModel.ClientId = clientContact.ClientId;
-                clientContactModel.Department = clientContact.Department;
-                clientContactModel.FirstName = clientContact.FirstName;
-                clientContactModel.LastName = clientContact.LastName;
-                clientContactModel.InternalNumber = clientContact.InternalNumber;
-                clientContactModel.MailAddress = clientContact.MailAddress;
-                clientContactModel.PhoneNumber = clientContact.PhoneNumber;
-                clientContactModel.Title = clientContact.Title;
-                
-                clientContactModels.Add(clientContactModel);
-            }
+            List<ClientContact> clientsContact = clientContactService.GetList(clientId);
+
+            if (clientsContact == null || clientsContact.Count == 0) return NotFound();
+
+            List<ClientContactModel> clientContactModels = new List<ClientContactModel>();
+
+            clientsContact.ForEach(x => { clientContactModels.Add(ClientContactModel.DtoToModel(x)); } );
 
             return Ok(clientContactModels);
         }
 
-        // GET: api/ClientsContact/5
-        [HttpGet("{clientId}")]
-        public IActionResult Get(Guid clientId)
+        // GET: api/ClientsContact/GetOne/id
+        [HttpGet("{id}")]
+        public IActionResult GetOne(Guid id)
         {
-            if (clientId != Guid.Empty)
-            {
-                ClientContact clientContact = clientContactService.Get(clientId);
-                if (clientContact != null)
-                {
-                    ClientContactModel clientContactModel = new ClientContactModel { Title = clientContact.Title, Department = clientContact.Department, FirstName = clientContact.FirstName, LastName = clientContact.LastName, Id = clientContact.Id, ClientId = clientContact.ClientId, InternalNumber = clientContact.InternalNumber, MailAddress = clientContact.MailAddress, PhoneNumber = clientContact.PhoneNumber };
+            if (id == Guid.Empty) return NotFound();
 
-                    return Ok(clientContactModel);
-                }
+            ClientContact clientContact = clientContactService.Get(id);
 
-                return BadRequest();
-            }
+            if (clientContact == null) return NotFound();
 
-            return BadRequest();
+            return Ok(ClientContactModel.DtoToModel(clientContact));
         }
 
-        // POST: api/ClientsContact                    
+        // POST: api/ClientsContact
         [HttpPost]
         public IActionResult Post([FromBody] ClientContactModel clientContactModel)
         {
+            if (clientContactModel.ClientId == Guid.Empty) return NotFound();
 
-            if (ModelState.IsValid)
-            {
+            ClientContact clientContact = ClientContactModel.ModelToDto(clientContactModel);
+            clientContactService.Add(clientContact);
 
-                ClientContact clientContact = new ClientContact { Title = clientContactModel.Title, Department = clientContactModel.Department, FirstName = clientContactModel.FirstName, LastName = clientContactModel.LastName, ClientId = clientContactModel.ClientId, InternalNumber = clientContactModel.InternalNumber, MailAddress = clientContactModel.MailAddress, PhoneNumber = clientContactModel.PhoneNumber };
-                clientContactService.Add(clientContact);
+            ClientContactModel created = ClientContactModel.DtoToModel(clientContact);
 
-                return Ok(new { status = "success" });
-            }
-
-            return BadRequest();
+            return CreatedAtAction(nameof(Get), new { clientId = clientContact.Id }, created);
         }
 
-        // PUT: api/ClientsContact/5
-        [HttpPut("{clientId}")]
-        public IActionResult Put([FromBody] ClientContactModel clientContactModel)
+        // PUT: api/ClientsContact/id
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] ClientContactModel clientContactModel)
         {
-            if (ModelState.IsValid)
-            {
+            if (id == Guid.Empty) return NotFound();
 
-                ClientContact clientContact = clientContactService.Get(clientContactModel.ClientId);
-                clientContact.Department = clientContactModel.Department;
-                clientContact.FirstName = clientContactModel.FirstName;
-                clientContact.LastName = clientContactModel.LastName;
-                clientContact.InternalNumber = clientContactModel.InternalNumber;
-                clientContact.MailAddress = clientContactModel.MailAddress;
-                clientContact.PhoneNumber = clientContactModel.PhoneNumber;
-                clientContact.Title = clientContactModel.Title;
-                clientContact.Id = clientContact.Id;
-                clientContact.ClientId = clientContact.ClientId;
-                clientContactService.Update(clientContact);
+            ClientContact clientContact = clientContactService.Get(id);
 
-                return Ok(new { status = "success" });
-            }
+            if (clientContact == null) return NotFound();
 
-            return BadRequest();
+            if (!string.IsNullOrEmpty(clientContactModel.Department)) clientContact.Department = clientContactModel.Department;
+            if (!string.IsNullOrEmpty(clientContactModel.FirstName)) clientContact.FirstName = clientContactModel.FirstName;
+            if (!string.IsNullOrEmpty(clientContactModel.LastName)) clientContact.LastName = clientContactModel.LastName;
+            if (!string.IsNullOrEmpty(clientContactModel.InternalNumber)) clientContact.InternalNumber = clientContactModel.InternalNumber;
+            if (!string.IsNullOrEmpty(clientContactModel.MailAddress)) clientContact.MailAddress = clientContactModel.MailAddress;
+            if (!string.IsNullOrEmpty(clientContactModel.PhoneNumber)) clientContact.PhoneNumber = clientContactModel.PhoneNumber;
+            if (!string.IsNullOrEmpty(clientContactModel.Title)) clientContact.Title = clientContactModel.Title;
+
+            clientContactService.Update(clientContact);
+
+            return Accepted(clientContactModel);
         }
 
-        // DELETE: api/ClientsContact/5
-        [HttpDelete("{currentId}")]
-        public IActionResult Delete(Guid currentId)
+        // DELETE: api/ClientsContact/id
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
         {
-            if (currentId != Guid.Empty)
-            {
-                clientContactService.Delete(currentId);
-                return Ok(new { status = "success" });
-            }
+            if (id == Guid.Empty) return NotFound();
 
-            return BadRequest();
+            clientContactService.Delete(id);
+
+            return NoContent();
         }
     }
 }
