@@ -62,7 +62,7 @@ namespace API.Controllers
 
             ClientContactModel created = ClientContactModel.DtoToModel(clientContact);
 
-            return CreatedAtAction(nameof(Get), new { clientId = clientContact.Id }, created);
+            return CreatedAtAction(nameof(Get), new { Id = clientContact.Id }, created);
         }
 
         // PUT: api/ClientsContact/id

@@ -1,6 +1,7 @@
 ﻿using Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,8 +11,9 @@ namespace API.Models
     {
         public Guid Id { get; set; }
         public Guid PersonalId { get; set; }
-        public Guid FacilityId { get; set; }
+        [Required]
         public string Code { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Description { get; set; }
 
@@ -21,7 +23,6 @@ namespace API.Models
             {
                 Id = area.Id,
                 PersonalId = area.PersonalId,
-                FacilityId = area.FacilityId,
                 Code = area.Code,
                 Name = area.Name,
                 Description = area.Description
@@ -33,9 +34,8 @@ namespace API.Models
         {
             return new Area
             {
-
+                Id = Guid.NewGuid(),
                 PersonalId = areaModel.PersonalId,
-                FacilityId = areaModel.FacilityId,
                 Code = areaModel.Code,
                 Name = areaModel.Name,
                 Description = areaModel.Description

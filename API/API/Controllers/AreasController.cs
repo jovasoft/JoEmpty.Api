@@ -27,7 +27,7 @@ namespace API.Controllers
         { 
             List<Area> areas = areaService.GetList();
 
-            if (areas == null) return NotFound();
+            if (areas == null || areas.Count == 0) return NotFound();
        
             List<AreaModel> areaModels = new List<AreaModel>();
 
@@ -41,51 +41,48 @@ namespace API.Controllers
         public IActionResult Post([FromBody] AreaModel areaModel)
         {
 
-            if (ModelState.IsValid)
-            {
+            if (areaModel.PersonalId == Guid.Empty) return NotFound();
+          
+            Area area = AreaModel.ModelToDto(areaModel);
+            areaService.Add(area);
 
-                Area area = AreaModel.ModelToDto(areaModel);
-                areaService.Add(area);
+            AreaModel created = AreaModel.DtoToModel(area);
 
-                return Ok(new { status = "success" });
-            }
-
-            return BadRequest();
+            return CreatedAtAction(nameof(Get), new { Id = area.Id }, created);
         }
 
         // PUT: api/Areas/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromBody] AreaModel areaModel)
+        public IActionResult Put(Guid id,[FromBody] AreaModel areaModel)
         {
-            if (ModelState.IsValid)
-            {
+            if (id == Guid.Empty) return NotFound();
 
-                Area area = areaService.Get(areaModel.Id);
-                area.Id = area.Id;
-                area.PersonalId = areaModel.PersonalId;
-                area.FacilityId = areaModel.FacilityId;
-                area.Code = areaModel.Code;
-                area.Name = areaModel.Name;
-                area.Description = areaModel.Description;
-                areaService.Update(area);
+            Area area = areaService.Get(areaModel.Id);
 
-                return Ok(new { status = "success" });
-            }
+            if (area == null) return NotFound();
+            
+            if (Guid.Empty == areaModel.PersonalId) area.PersonalId = areaModel.PersonalId;
+            if (!string.IsNullOrEmpty(areaModel.Code)) area.Code = areaModel.Code;
+            if (!string.IsNullOrEmpty(areaModel.Name)) area.Name = areaModel.Name;
+            if (!string.IsNullOrEmpty(areaModel.Name)) area.Description = areaModel.Description;
 
-            return BadRequest();
+            areaService.Update(area);
+            AreaModel accepted = AreaModel.DtoToModel(area);
+
+            return Accepted(accepted);
+            
         }
 
         // DELETE: api/Areas/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                areaService.Delete(id);
-                return Ok(new { status = "success" });
-            }
+            if (id == Guid.Empty) return NotFound();
 
-            return BadRequest();
+            areaService.Delete(id);
+
+            return NoContent();
+            
         }
     }
 }
