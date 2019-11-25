@@ -1,6 +1,7 @@
 ﻿using Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +11,9 @@ namespace API.Models
     {
         public Guid Id { get; set; }
         public Guid ClientId { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
         public string Title { get; set; }
         public string Department { get; set; }
@@ -36,15 +39,15 @@ namespace API.Models
         public static ClientContact ModelToDto(ClientContactModel clientContactModel)
         {
             return new ClientContact {
+                Id = Guid.NewGuid(),
                 ClientId = clientContactModel.ClientId,
                 Department = clientContactModel.Department,
                 FirstName = clientContactModel.FirstName,
-                Id = clientContactModel.Id,
                 InternalNumber = clientContactModel.InternalNumber,
                 LastName = clientContactModel.LastName,
                 MailAddress = clientContactModel.MailAddress,
                 PhoneNumber = clientContactModel.PhoneNumber,
-                Title = clientContactModel.Title
+                Title = clientContactModel.Title,
             };
         }
 
