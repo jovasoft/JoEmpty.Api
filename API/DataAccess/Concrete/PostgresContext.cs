@@ -13,7 +13,6 @@ namespace DataAccess.Concrete
 {
     public class PostgresContext : DbContext
     {
-        public DbSet<Item> Items { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientContact> ClientContacts { get; set; }

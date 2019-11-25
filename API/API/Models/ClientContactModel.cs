@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 namespace API.Models
 {
     public class ClientContactModel
-    {
-        
+    {        
         public Guid Id { get; set; }
         public Guid ClientId { get; set; }
+
         [Required]
         public string FirstName { get; set; }
+
         [Required]
         public string LastName { get; set; }
+
         public string Title { get; set; }
         public string Department { get; set; }
         public string InternalNumber { get; set; }

@@ -26,17 +26,17 @@ namespace Business.Concrete
             facilityDal.Delete(facilityDal.Get(x => x.Id == id));
         }
 
-        public Facility GetByCode(string code)
+        public Facility Get(string code)
         {
             return facilityDal.Get(x => x.Code == code);
         }
 
-        public List<Facility> GetByContractId(Guid contractId)
+        public List<Facility> GetList(Guid contractId)
         {
             return facilityDal.GetList(x => x.ContractId == contractId);
         }
 
-        public Facility GetByFacilityId(Guid id)
+        public Facility Get(Guid id)
         {
             return facilityDal.Get(x => x.Id == id);
         }
@@ -46,11 +46,9 @@ namespace Business.Concrete
             return facilityDal.GetList();
         }
 
-        public bool Update(Facility facility)
+        public void Update(Facility facility)
         {
             facilityDal.Update(facility);
-
-            return true;
         }
     }
 }

@@ -6,26 +6,26 @@ namespace Entities
 {
     public enum Currencies : byte
     {
-        TL,
+        TL = 1,
         EURO,
         DOLLAR
     }
 
     public enum Supplies : byte
     {
-        Internal,
+        Internal = 1,
         External
     }
 
     public enum MaintenanceStatuses : byte
     {
-        Active,
+        Active = 1,
         Passive
     }
 
     public enum FacilityTypes : byte
     {
-        MR,
+        MR = 1,
         MRL,
         Hydraulic,
         DumbWaiter,

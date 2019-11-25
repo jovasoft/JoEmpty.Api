@@ -9,15 +9,15 @@ namespace Business.Abstract
     {
         void Add(Facility facility);
 
-        Facility GetByCode(string code);
+        Facility Get(string code);
 
-        List<Facility> GetByContractId(Guid contractId);
+        List<Facility> GetList(Guid contractId);
 
-        Facility GetByFacilityId(Guid id);
+        Facility Get(Guid id);
 
         void Delete(Guid id);
 
-        bool Update(Facility facility);
+        void Update(Facility facility);
 
         List<Facility> GetList();
     }
