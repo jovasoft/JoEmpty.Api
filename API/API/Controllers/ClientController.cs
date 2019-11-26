@@ -12,11 +12,11 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsController : ControllerBase
+    public class ClientController : ControllerBase
     {
         private IClientService clientService;
 
-        public ClientsController(IClientService clientService)
+        public ClientController(IClientService clientService)
         {
             this.clientService = clientService;
         }

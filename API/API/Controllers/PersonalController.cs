@@ -12,10 +12,10 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonalsController : ControllerBase
+    public class PersonalController : ControllerBase
     {
         private IPersonalService personalService;
-        public PersonalsController(IPersonalService personalService)
+        public PersonalController(IPersonalService personalService)
         {
             this.personalService = personalService;
         }
