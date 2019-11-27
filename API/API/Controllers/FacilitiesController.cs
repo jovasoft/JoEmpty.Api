@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FacilitiesController : ControllerBase
+    public class FacilitiesController : ResponseController
     {
         private IFacilityService facilityService;
         private IContractService contractService;
@@ -29,83 +29,83 @@ namespace API.Controllers
         {
             List<Facility> facilities = facilityService.GetList();
 
-            if (facilities == null || facilities.Count == 0) return NotFound();
+            if (facilities == null || facilities.Count == 0) return Errors("Tesis listesi bulunamadı.", null, 404);
 
             List<FacilityModel> facilityModels = new List<FacilityModel>();
 
             facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
 
-            return Ok(facilityModels);
+            return Success(null, facilityModels, 200);
         }
 
         // GET: api/Facilities/GetByFacilityId/id
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı tesis yok.", null, 404);
 
             Facility facility = facilityService.Get(id);
 
-            if (facility == null) return NotFound();
+            if (facility == null) return Errors("Böyle bir ID numaralı tesis yok.", null, 404);
 
-            return Ok(FacilityModel.DtoToModel(facility));
+            return Success(null, FacilityModel.DtoToModel(facility));
         }
 
         // GET: api/Facilities/GetByContractFacilities/contractId
         [HttpGet("GetByContractFacilities/{contractId}")]
         public IActionResult GetByContractFacilities(Guid contractId)
         {
-            if (contractId == Guid.Empty) return NotFound();
+            if (contractId == Guid.Empty) return Errors("Böyle bir ID numaralı sözleşmenin tesisleri yok.", null, 404);
 
             List<Facility> facilities = facilityService.GetList(contractId);
 
-            if (facilities == null || facilities.Count == 0) return NotFound();
+            if (facilities == null || facilities.Count == 0) return Errors("Böyle bir ID numaralı sözleşmenin tesisleri yok.", null, 404);
 
             List<FacilityModel> facilityModels = new List<FacilityModel>();
 
             facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
 
-            return Ok(facilityModels);
+            return Success(null, facilityModels, 200);
         }
 
         // POST: api/Facilities
         [HttpPost]
         public IActionResult Post([FromBody] FacilityModel facilityModel)
         {
-            if (facilityModel.ContractId == Guid.Empty) return NotFound();
+            if (facilityModel.ContractId == Guid.Empty) return Errors("Sözleşme ID boş olamaz.", null, 404);
 
             if (!string.IsNullOrEmpty(facilityModel.Code))
             {
                 Facility isExists = facilityService.Get(facilityModel.Code);
 
-                if (isExists != null) return BadRequest();
+                if (isExists != null) return Errors("Bu tesis koduna ait kayıt vardır.", null);
             }
 
             Contract contract = contractService.Get(facilityModel.ContractId);
 
-            if (contract == null) return NotFound();
+            if (contract == null) return Errors("Bu sözleşme koduna ait sözleşme olmadığı için tesis eklenemedi.", null, 404);
 
             int facilityCount = facilityService.GetList(facilityModel.ContractId).Count;
 
-            if (facilityCount == contract.FacilityCount) return BadRequest();
+            if (facilityCount == contract.FacilityCount) return Errors("Bu sözleşmeye daha fazla tesis eklenemez.", null);
 
             Facility facility = FacilityModel.ModelToDto(facilityModel);
             facilityService.Add(facility);
 
-            FacilityModel created = FacilityModel.DtoToModel(facility);
+            if (facilityService.Get(facility.Id) == null) return Errors("Bölge kaydı yapılamadı.", null, 404);
 
-            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
+            return Success(null, FacilityModel.DtoToModel(facility), 201);
         }
 
         // PUT: api/Facilities/id
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] FacilityModel facilityModel)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Tesis ID boş olamaz.", null, 404);
 
             Facility facility = facilityService.Get(id);
 
-            if (facility == null) return NotFound();
+            if (facility == null) return Errors("Güncellenmek istenen tesis bulunamadı.", null, 404);
 
             if (!string.IsNullOrEmpty(facilityModel.Address)) facility.Address = facilityModel.Address;
             if (!string.IsNullOrEmpty(facilityModel.Brand)) facility.Brand = facilityModel.Brand;
@@ -113,7 +113,7 @@ namespace API.Controllers
             {
                 Facility isExists = facilityService.Get(facilityModel.Code);
 
-                if (isExists != null && id != isExists.Id) return BadRequest();
+                if (isExists != null && id != isExists.Id) return Errors("Güncellenmek istenen tesis kodu başka bir tesise atanmıştır.", null);
 
                 facility.Code = facilityModel.Code;
             }
@@ -132,24 +132,22 @@ namespace API.Controllers
 
             facilityService.Update(facility);
 
-            FacilityModel accepted = FacilityModel.DtoToModel(facility);
-
-            return Accepted(accepted);
+            return Success(null, FacilityModel.DtoToModel(facility), 202);
         }
 
         // DELETE: api/Facilities/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı tesis yok.", null, 404);
 
             Facility facility = facilityService.Get(id);
 
-            if (facility == null) return NotFound();
+            if (facility == null) return Errors("Böyle bir ID numaralı tesis yok.", null, 404);
 
             facilityService.Delete(id);
 
-            return NoContent();
+            return Success(null, null, 204);
         }
     }
 }

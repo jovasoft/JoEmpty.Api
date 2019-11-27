@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AreasController : ControllerBase
+    public class AreasController : ResponseController
     {
         IAreaService areaService;
 
@@ -27,65 +27,65 @@ namespace API.Controllers
         { 
             List<Area> areas = areaService.GetList();
 
-            if (areas == null || areas.Count == 0) return NotFound();
-       
+            if (areas == null || areas.Count == 0) return Errors("Bölge listesi bulunamadı.", null, 404);
+
             List<AreaModel> areaModels = new List<AreaModel>();
 
             areas.ForEach(x => { areaModels.Add(AreaModel.DtoToModel(x)); });
 
-            return Ok(areaModels);
+            return Success(null, areaModels, 200);
         }
 
         // GET: api/Areas/GetOne/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı bölge yok.",null,404);
 
             Area area = areaService.Get(id);
 
-            if (area == null) return NotFound();
+            if (area == null) return Errors("Böyle bir ID numaralı bölge yok.",null,404);
 
-            return Ok(AreaModel.DtoToModel(area));
+            return Success(null, AreaModel.DtoToModel(area));
         }
 
         // POST: api/Areas                    
         [HttpPost]
         public IActionResult Post([FromBody] AreaModel areaModel)
         {
-            if (areaModel.PersonalId == Guid.Empty) return NotFound();
+            if (areaModel.PersonalId == Guid.Empty) return Errors("Personel ID boş olamaz.", null, 404);
 
             if (!string.IsNullOrEmpty(areaModel.Code))
             {
                 Area isExists = areaService.Get(areaModel.Code);
 
-                if (isExists != null) return BadRequest();
+                if (isExists != null) return Errors("Bu kodlu bölge vardır.", null);
             }
 
             Area area = AreaModel.ModelToDto(areaModel);
             areaService.Add(area);
 
-            AreaModel created = AreaModel.DtoToModel(area);
+            if (areaService.Get(area.Id) == null) return Errors("Bölge kaydı yapılamadı.",null,404);
 
-            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
+            return Success(null, AreaModel.DtoToModel(area), 201);
         }
 
         // PUT: api/Areas/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id,[FromBody] AreaModel areaModel)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Bölge ID boş olamaz.", null, 404);
 
             Area area = areaService.Get(id);
 
-            if (area == null) return NotFound();
-            
+            if (area == null) return Errors("Güncellenmek istenen kayıt yoktur.", null, 404);
+
             if (Guid.Empty == areaModel.PersonalId) area.PersonalId = areaModel.PersonalId;
             if (!string.IsNullOrEmpty(areaModel.Code))
             {
                 Area isExists = areaService.Get(areaModel.Code);
 
-                if (isExists != null && id != isExists.Id) return BadRequest();
+                if (isExists != null && id != isExists.Id) return Errors("Güncellenmek istenen bölge kodu başka bölgeye atanmıştır.", null);
 
                 area.Code = areaModel.Code;
             }
@@ -94,25 +94,23 @@ namespace API.Controllers
 
             areaService.Update(area);
 
-            AreaModel accepted = AreaModel.DtoToModel(area);
+            return Success(null, AreaModel.DtoToModel(area), 202);
 
-            return Accepted(accepted);
-            
         }
 
         // DELETE: api/Areas/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı bölge yok.", null, 404);
 
             Area area = areaService.Get(id);
 
-            if (area == null) return NotFound();
+            if (area == null) return Errors("Böyle bir ID numaralı bölge yok.", null, 404);
 
             areaService.Delete(id);
 
-            return NoContent();
+            return Success(null, null, 204);
         }
     }
 }

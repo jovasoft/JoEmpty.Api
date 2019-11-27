@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonalsController : ControllerBase
+    public class PersonalsController : ResponseController
     {
         private IPersonalService personalService;
         public PersonalsController(IPersonalService personalService)
@@ -26,51 +26,52 @@ namespace API.Controllers
         {
             List<Personal> personals = personalService.GetList();
 
-            if (personals == null || personals.Count == 0) return NotFound();
+            if (personals == null || personals.Count == 0) return Errors("Personel listesi bulunamadı.",null,404);
 
             List<PersonalModel> personalModels = new List<PersonalModel>();
 
             personals.ForEach(x => { personalModels.Add(PersonalModel.DtoToModel(x)); });
 
-            return Ok(personalModels);
+            return Success(null,personalModels,200);
+
+            //return Ok(personalModels);
         }
 
         // GET: api/Personals/GetOne/id
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı personel yok.");
 
             Personal personal = personalService.Get(id);
 
-            if (personal == null) return NotFound();
+            if (personal == null) return Errors("Böyle bir ID numaralı personel yok.");
 
-            return Ok(PersonalModel.DtoToModel(personal));
+            return Success(null,PersonalModel.DtoToModel(personal));
         }
 
         // POST: api/Personals
         [HttpPost]
         public IActionResult Post([FromBody] PersonalModel personalModel)
         {
-            //if (personelModel.ClientId == Guid.Empty) return NotFound();
 
             Personal personal = PersonalModel.ModelToDto(personalModel);
             personalService.Add(personal);
 
-            PersonalModel created = PersonalModel.DtoToModel(personal);
+            if (personalService.Get(personal.Id) == null) return Errors("Personel kaydı yapılamadı.", null, 404);
 
-            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
+            return Success(null, PersonalModel.DtoToModel(personal), 201);
         }
 
         // PUT: api/Personals/id
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] PersonalModel personalModel)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı personel yok.",null,404);
 
             Personal personal = personalService.Get(id);
 
-            if (personal == null) return NotFound();
+            if (personal == null) return Errors("Böyle bir ID numaralı personel yok.", null, 404);
 
             if (!string.IsNullOrEmpty(personalModel.FirstName)) personal.FirstName = personalModel.FirstName;
             if (!string.IsNullOrEmpty(personalModel.LastName)) personal.LastName = personalModel.LastName;
@@ -79,22 +80,22 @@ namespace API.Controllers
 
             PersonalModel accepted = PersonalModel.DtoToModel(personal);
 
-            return Accepted(accepted);
+            return Success(null,accepted,202);
         }
 
         // DELETE: api/Personals/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı personel yok.", null, 404);
 
             Personal personal = personalService.Get(id);
 
-            if (personal == null) return NotFound();
+            if (personal == null) return Errors("Böyle bir ID numaralı personel yok.", null, 404);
 
             personalService.Delete(id);
 
-            return NoContent();
+            return Success(null,null,204);
         }
     }
 }

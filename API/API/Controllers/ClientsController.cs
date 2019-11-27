@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsController : ControllerBase
+    public class ClientsController : ResponseController
     {
         private IClientService clientService;
 
@@ -27,26 +27,26 @@ namespace API.Controllers
         {
             List<Client> clients = clientService.GetList();
 
-            if (clients == null || clients.Count == 0 ) return NotFound();
+            if (clients == null || clients.Count == 0 ) return Errors("Müşteri listesi bulunamadı.", null, 404);
 
             List<ClientModel> clientModels = new List<ClientModel>();
 
             clients.ForEach(x => { clientModels.Add(ClientModel.DtoToModel(x)); });
 
-            return Ok(clientModels);
+            return Success(null, clientModels, 200);
         }
 
         // GET: api/Clients/id/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
 
             Client client = clientService.Get(id);
 
-            if (client == null) return NotFound();
+            if (client == null) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
 
-            return Ok(ClientModel.DtoToModel(client));
+            return Success(null, ClientModel.DtoToModel(client));
         }
 
         // POST: api/Clients
@@ -57,32 +57,32 @@ namespace API.Controllers
             {
                 Client isExists = clientService.Get(clientModel.CurrentCode);
 
-                if (isExists != null) return BadRequest();
+                if (isExists != null) Errors("Bu cari koda tanımlı müşteri vardır.", null);
             }
 
             Client client = ClientModel.ModelToDto(clientModel);
             clientService.Add(client);
 
-            ClientModel created = ClientModel.DtoToModel(client);
+            if (clientService.Get(client.Id) == null) return Errors("Müşteri kaydı yapılamadı.", null, 404);
 
-            return CreatedAtAction(nameof(GetOne), new { created.Id }, created);
+            return Success(null, ClientModel.DtoToModel(client), 201);
         }
 
         // PUT: api/Clients/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ClientModel clientModel)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Müşteri ID boş olamaz.", null, 404);
 
             Client client = clientService.Get(id);
 
-            if (client == null) return NotFound();
+            if (client == null) return Errors("Güncellenmek istenen kayıt yoktur.", null, 404);
 
             if (!string.IsNullOrEmpty(clientModel.CurrentCode))
             {
                 Client isExists = clientService.Get(clientModel.CurrentCode);
 
-                if (isExists != null && id != isExists.Id) return BadRequest();
+                if (isExists != null && id != isExists.Id) return Errors("Güncellenmek istenen cari kodu başka müşteriye atanmıştır.", null);
 
                 client.CurrentCode = clientModel.CurrentCode;
             }
@@ -92,24 +92,22 @@ namespace API.Controllers
                
             clientService.Update(client);
 
-            ClientModel accepted = ClientModel.DtoToModel(client);
-
-            return Accepted(accepted);
+            return Success(null, ClientModel.DtoToModel(client), 202);
         }
 
         // DELETE: api/Clients/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
+            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
 
             Client client = clientService.Get(id);
 
-            if (client == null) return NotFound();
+            if (client == null) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
 
             clientService.Delete(id);
 
-            return NoContent();
+            return Success(null, null, 204);
         }
     }
 }
