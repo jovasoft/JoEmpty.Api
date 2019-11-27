@@ -21,7 +21,7 @@ namespace API.Controllers
             this.clientService = clientService;
         }
 
-        // GET: api/Clients
+        // GET: api/Client
         [HttpGet]
         public IActionResult Get()
         {
@@ -36,7 +36,7 @@ namespace API.Controllers
             return Success(null, clientModels);
         }
 
-        // GET: api/Clients/id/5
+        // GET: api/Client/id/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
@@ -49,7 +49,7 @@ namespace API.Controllers
             return Success(null, ClientModel.DtoToModel(client));
         }
 
-        // POST: api/Clients
+        // POST: api/Client
         [HttpPost]
         public IActionResult Post([FromBody] ClientModel clientModel)
         {
@@ -68,7 +68,7 @@ namespace API.Controllers
             return Success(null, ClientModel.DtoToModel(client), 201);
         }
 
-        // PUT: api/Clients/5
+        // PUT: api/Client/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ClientModel clientModel)
         {
@@ -95,7 +95,7 @@ namespace API.Controllers
             return Success(null, ClientModel.DtoToModel(client), 202);
         }
 
-        // DELETE: api/Clients/5
+        // DELETE: api/Client/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

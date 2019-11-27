@@ -21,7 +21,7 @@ namespace API.Controllers
             this.contractService = contractService;
         }
 
-        // GET: api/Contracts
+        // GET: api/Contract
         [HttpGet]
         public IActionResult Get()
         {
@@ -36,7 +36,7 @@ namespace API.Controllers
             return Success(null, contractModels, 200);
         }
 
-        // GET: api/Contracts/5
+        // GET: api/Contract/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
@@ -49,7 +49,7 @@ namespace API.Controllers
             return Success(null, ContractModel.DtoToModel(contract));
         }
 
-        // GET: api/Contracts/GetByClientContracts/clientId
+        // GET: api/Contract/GetByClientContracts/clientId
         [HttpGet("GetByClientContracts/{clientId}")]
         public IActionResult GetByClientContracts(Guid clientId)
         {
@@ -66,7 +66,7 @@ namespace API.Controllers
             return Success(null, contractModels, 200);
         }
 
-        // POST: api/Contracts
+        // POST: api/Contract
         [HttpPost]
         public IActionResult Post([FromBody] ContractModel contractModel)
         {
@@ -89,7 +89,7 @@ namespace API.Controllers
             return Success(null, ContractModel.DtoToModel(contract), 201);
         }
 
-        // PUT: api/Clients/5
+        // PUT: api/Contract/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ContractModel contractModel)
         {
@@ -123,7 +123,7 @@ namespace API.Controllers
             return Success(null, ContractModel.DtoToModel(contract), 202);
         }
 
-        // DELETE: api/BankAccount/5
+        // DELETE: api/Contract/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
