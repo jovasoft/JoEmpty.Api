@@ -27,24 +27,24 @@ namespace API.Controllers
         {
             List<Client> clients = clientService.GetList();
 
-            if (clients == null || clients.Count == 0 ) return Errors("Müşteri listesi bulunamadı.", null, 404);
+            if (clients == null || clients.Count == 0 ) return Error("Eşleşen kayıt bulunamadı.", null, 404);
 
             List<ClientModel> clientModels = new List<ClientModel>();
 
             clients.ForEach(x => { clientModels.Add(ClientModel.DtoToModel(x)); });
 
-            return Success(null, clientModels, 200);
+            return Success(null, clientModels);
         }
 
         // GET: api/Clients/id/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
+            if (id == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
 
             Client client = clientService.Get(id);
 
-            if (client == null) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
+            if (client == null) return Error("Müşteri bulunamadı.", null, 404);
 
             return Success(null, ClientModel.DtoToModel(client));
         }
@@ -57,13 +57,13 @@ namespace API.Controllers
             {
                 Client isExists = clientService.Get(clientModel.CurrentCode);
 
-                if (isExists != null) Errors("Bu cari koda tanımlı müşteri vardır.", null);
+                if (isExists != null) Error("Bu cari koda ait bir müşteri zaten var.", null);
             }
 
             Client client = ClientModel.ModelToDto(clientModel);
             clientService.Add(client);
 
-            if (clientService.Get(client.Id) == null) return Errors("Müşteri kaydı yapılamadı.", null, 404);
+            if (clientService.Get(client.Id) == null) return Error("Müşteri eklenemedi.", null);
 
             return Success(null, ClientModel.DtoToModel(client), 201);
         }
@@ -72,17 +72,17 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ClientModel clientModel)
         {
-            if (id == Guid.Empty) return Errors("Müşteri ID boş olamaz.", null, 404);
+            if (id == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
 
             Client client = clientService.Get(id);
 
-            if (client == null) return Errors("Güncellenmek istenen kayıt yoktur.", null, 404);
+            if (client == null) return Error("Müşteri bulunamadı.", null, 404);
 
             if (!string.IsNullOrEmpty(clientModel.CurrentCode))
             {
                 Client isExists = clientService.Get(clientModel.CurrentCode);
 
-                if (isExists != null && id != isExists.Id) return Errors("Güncellenmek istenen cari kodu başka müşteriye atanmıştır.", null);
+                if (isExists != null && id != isExists.Id) return Error("Güncellenmek istenen cari kod başka bir müşteriye ait.", null);
 
                 client.CurrentCode = clientModel.CurrentCode;
             }
@@ -99,11 +99,11 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
+            if (id == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
 
             Client client = clientService.Get(id);
 
-            if (client == null) return Errors("Böyle bir ID numaralı müşteri yok.", null, 404);
+            if (client == null) return Error("Müşteri bulunamadı.", null, 404);
 
             clientService.Delete(id);
 

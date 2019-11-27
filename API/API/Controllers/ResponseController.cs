@@ -29,9 +29,9 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        public IActionResult Errors(string message = default(string), object data = default(object), int code = 400)
+        public IActionResult Error(string message = default(string), object data = default(object), int code = 400)
         {
-            var rv = new ResponseModel()
+            var response = new ResponseModel()
             {
                 Success = false,
                 Message = message,
@@ -40,11 +40,11 @@ namespace API.Controllers
             };
 
             if (code == 403) return Forbid();
-            if (code == 500) return StatusCode(500,rv);
-            if (code == 401) return Unauthorized(rv);
-            if (code == 404) return NotFound(rv);
+            if (code == 500) return StatusCode(500, null);
+            if (code == 401) return Unauthorized(response);
+            if (code == 404) return NotFound(response);
 
-            return BadRequest(rv);
+            return BadRequest(response);
 
 
         }

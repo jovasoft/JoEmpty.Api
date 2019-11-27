@@ -27,7 +27,7 @@ namespace API.Controllers
         {
             List<Contract> contracts = contractService.GetList();
 
-            if(contracts == null || contracts.Count == 0) return Errors("Sözleşme listesi bulunamadı.", null, 404);
+            if(contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", null, 404);
 
             List<ContractModel> contractModels = new List<ContractModel>();
 
@@ -40,22 +40,24 @@ namespace API.Controllers
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı sözleşme yok.", null, 404);
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
 
             Contract contract = contractService.Get(id);
 
-            if (contract == null) return Errors("Böyle bir ID numaralı sözleşme yok.", null, 404);
+            if (contract == null) return Error("Sözleşme bulunamadı.", null, 404);
 
-            return Ok(ContractModel.DtoToModel(contract));
+            return Success(null, ContractModel.DtoToModel(contract));
         }
 
         // GET: api/Contracts/GetByClientContracts/clientId
         [HttpGet("GetByClientContracts/{clientId}")]
         public IActionResult GetByClientContracts(Guid clientId)
         {
+            if (clientId == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
+
             List<Contract> contracts = contractService.GetList(clientId);
 
-            if (contracts == null || contracts.Count == 0) return Errors("Müşterinin sözleşmesi yok.", null, 404);
+            if (contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", null, 404);
 
             List<ContractModel> contractModels = new List<ContractModel>();
 
@@ -68,21 +70,21 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ContractModel contractModel)
         {
-            if (contractModel.ClientId == Guid.Empty) return Errors("Müşteri ID boş olamaz.", null, 404);
+            if (contractModel.ClientId == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
 
-            if (contractModel.StartDate > contractModel.FinishDate) return Errors("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.", null);
+            if (contractModel.StartDate > contractModel.FinishDate) return Error("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.", null);
 
             if (!string.IsNullOrEmpty(contractModel.Code))
             {
                 Contract isExists = contractService.Get(contractModel.Code);
 
-                if (isExists != null) return Errors("Bu sözleşme koduna ait sözleşme bulunmaktadır.", null);
+                if (isExists != null) return Error("Bu koda ait bir sözleşme zaten var.", null);
             }
 
             Contract contract = ContractModel.ModelToDto(contractModel);
             contractService.Add(contract);
 
-            if (contractService.Get(contract.Id) == null) return Errors("Sözleşme kaydı yapılamadı.", null, 404);
+            if (contractService.Get(contract.Id) == null) return Error("Sözleşme eklenemedi.", null);
 
             return Success(null, ContractModel.DtoToModel(contract), 201);
         }
@@ -91,18 +93,18 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ContractModel contractModel)
         {
-            if (id == Guid.Empty) return Errors("Sözleşme ID boş olamaz.", null, 404);
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
 
             Contract contract = contractService.Get(id);
 
-            if(contract == null) return Errors("Güncellenmek istenen sözleşme yok.", null, 404);
+            if(contract == null) return Error("Sözleşme bulunamadı.", null, 404);
 
             if (Guid.Empty == contractModel.ClientId) contract.ClientId = contractModel.ClientId;
             if (!string.IsNullOrEmpty(contractModel.Code))
             {
                 Contract isExists = contractService.Get(contractModel.Code);
 
-                if (isExists != null && id != isExists.Id) return Errors("Bu sözleşme koduna ait sözleşme bulunmaktadır.", null);
+                if (isExists != null && id != isExists.Id) return Error("Güncellenmek istenen kod başka bir sözleşmeye ait.", null);
 
                 contract.Code = contractModel.Code;
             }
@@ -114,7 +116,7 @@ namespace API.Controllers
             if (contractModel.Supply > 0) contract.Supply = contractModel.Supply;
             if (contractModel.Amount > 0) contract.Amount = contractModel.Amount;
 
-            if (contractModel.StartDate > contractModel.FinishDate) return Errors("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.", null);
+            if (contractModel.StartDate > contractModel.FinishDate) return Error("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.", null);
 
             contractService.Update(contract);
 
@@ -125,11 +127,11 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return Errors("Böyle bir ID numaralı sözleşme yok.", null, 404);
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
 
             Contract contract = contractService.Get(id);
 
-            if (contract == null) return Errors("Böyle bir ID numaralı sözleşme yok.", null, 404);
+            if (contract == null) return Error("Sözleşme bulunamadı.", null, 404);
 
             contractService.Delete(id);
 
