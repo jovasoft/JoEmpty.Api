@@ -12,12 +12,12 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FacilitiesController : ResponseController
+    public class FacilityController : ResponseController
     {
         private IFacilityService facilityService;
         private IContractService contractService;
 
-        public FacilitiesController(IFacilityService facilityService, IContractService contractService)
+        public FacilityController(IFacilityService facilityService, IContractService contractService)
         {
             this.facilityService = facilityService;
             this.contractService = contractService;

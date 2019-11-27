@@ -12,11 +12,11 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AreasController : ResponseController
+    public class AreaController : ResponseController
     {
         IAreaService areaService;
 
-        public AreasController(IAreaService areaService)
+        public AreaController(IAreaService areaService)
         {
             this.areaService = areaService;
         }

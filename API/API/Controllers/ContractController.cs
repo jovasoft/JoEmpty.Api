@@ -12,11 +12,11 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContractsController : ResponseController
+    public class ContractController : ResponseController
     {
         private IContractService contractService;
 
-        public ContractsController(IContractService contractService)
+        public ContractController(IContractService contractService)
         {
             this.contractService = contractService;
         }
