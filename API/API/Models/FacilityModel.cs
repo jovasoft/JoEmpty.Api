@@ -23,6 +23,12 @@ namespace API.Models
         public string Address { get; set; }
 
         [Required]
+        public string City { get; set; }
+
+        [Required]
+        public string District { get; set; }
+
+        [Required]
         [Range(1, 6)]
         public FacilityTypes Type { get; set; }
 
@@ -61,7 +67,9 @@ namespace API.Models
                 Speed = facility.Speed,
                 Station = facility.Station,
                 Type = facility.Type,
-                WarrantyFinishDate = facility.WarrantyFinishDate
+                WarrantyFinishDate = facility.WarrantyFinishDate,
+                City = facility.City,
+                District = facility.District
             };
         }
 
@@ -84,7 +92,9 @@ namespace API.Models
                 Speed = facilityModel.Speed,
                 Station = facilityModel.Station,
                 Type = facilityModel.Type,
-                WarrantyFinishDate = facilityModel.WarrantyFinishDate
+                WarrantyFinishDate = facilityModel.WarrantyFinishDate,
+                City = facilityModel.City,
+                District = facilityModel.District
             };
         }
     }

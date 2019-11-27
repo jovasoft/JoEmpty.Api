@@ -108,7 +108,10 @@ namespace API.Controllers
             if (facility == null) return Error("Tesis bulunamadı.", 404);
 
             if (!string.IsNullOrEmpty(facilityModel.Address)) facility.Address = facilityModel.Address;
+            if (!string.IsNullOrEmpty(facilityModel.City)) facility.City = facilityModel.City;
+            if (!string.IsNullOrEmpty(facilityModel.District)) facility.District = facilityModel.District;
             if (!string.IsNullOrEmpty(facilityModel.Brand)) facility.Brand = facilityModel.Brand;
+            if (!string.IsNullOrEmpty(facilityModel.Name)) facility.Name = facilityModel.Name;
             if (!string.IsNullOrEmpty(facilityModel.Code))
             {
                 Facility isExists = facilityService.Get(facilityModel.Code);
@@ -117,7 +120,6 @@ namespace API.Controllers
 
                 facility.Code = facilityModel.Code;
             }
-            if (!string.IsNullOrEmpty(facilityModel.Name)) facility.Name = facilityModel.Name;
             if (facilityModel.WarrantyFinishDate != null) facility.WarrantyFinishDate = facilityModel.WarrantyFinishDate;
             if (facilityModel.AreaId != Guid.Empty) facility.AreaId = facilityModel.AreaId;
             if (facilityModel.ContractId != Guid.Empty) facility.ContractId = facilityModel.ContractId;
