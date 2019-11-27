@@ -29,83 +29,83 @@ namespace API.Controllers
         {
             List<Facility> facilities = facilityService.GetList();
 
-            if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", null, 404);
+            if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
 
             List<FacilityModel> facilityModels = new List<FacilityModel>();
 
             facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
 
-            return Success(null, facilityModels);
+            return Success(facilityModels);
         }
 
         // GET: api/Facility/GetByFacilityId/id
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return Error("Tesis bulunamadı.", null, 404);
+            if (id == Guid.Empty) return Error("Tesis bulunamadı.", 404);
 
             Facility facility = facilityService.Get(id);
 
-            if (facility == null) return Error("Tesis bulunamadı.", null, 404);
+            if (facility == null) return Error("Tesis bulunamadı.", 404);
 
-            return Success(null, FacilityModel.DtoToModel(facility));
+            return Success(FacilityModel.DtoToModel(facility));
         }
 
         // GET: api/Facility/GetByContractFacilities/contractId
         [HttpGet("GetByContractFacilities/{contractId}")]
         public IActionResult GetByContractFacilities(Guid contractId)
         {
-            if (contractId == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
+            if (contractId == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
             List<Facility> facilities = facilityService.GetList(contractId);
 
-            if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", null, 404);
+            if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
 
             List<FacilityModel> facilityModels = new List<FacilityModel>();
 
             facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
 
-            return Success(null, facilityModels);
+            return Success(facilityModels);
         }
 
         // POST: api/Facility
         [HttpPost]
         public IActionResult Post([FromBody] FacilityModel facilityModel)
         {
-            if (facilityModel.ContractId == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
+            if (facilityModel.ContractId == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
             if (!string.IsNullOrEmpty(facilityModel.Code))
             {
                 Facility isExists = facilityService.Get(facilityModel.Code);
 
-                if (isExists != null) return Error("Bu koda ait bir tesis zaten var.", null);
+                if (isExists != null) return Error("Bu koda ait bir tesis zaten var.");
             }
 
             Contract contract = contractService.Get(facilityModel.ContractId);
 
-            if (contract == null) return Error("Sözleşme bulunamadı.", null, 404);
+            if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
             int facilityCount = facilityService.GetList(facilityModel.ContractId).Count;
 
-            if (facilityCount == contract.FacilityCount) return Error("Bu sözleşmeye daha fazla tesis eklenemez.", null);
+            if (facilityCount == contract.FacilityCount) return Error("Bu sözleşmeye daha fazla tesis eklenemez.");
 
             Facility facility = FacilityModel.ModelToDto(facilityModel);
             facilityService.Add(facility);
 
-            if (facilityService.Get(facility.Id) == null) return Error("Tesis eklenemedi.", null);
+            if (facilityService.Get(facility.Id) == null) return Error("Tesis eklenemedi.");
 
-            return Success(null, FacilityModel.DtoToModel(facility), 201);
+            return Success(FacilityModel.DtoToModel(facility), 201);
         }
 
         // PUT: api/Facility/id
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] FacilityModel facilityModel)
         {
-            if (id == Guid.Empty) return Error("Tesis bulunamadı.", null, 404);
+            if (id == Guid.Empty) return Error("Tesis bulunamadı.", 404);
 
             Facility facility = facilityService.Get(id);
 
-            if (facility == null) return Error("Tesis bulunamadı.", null, 404);
+            if (facility == null) return Error("Tesis bulunamadı.", 404);
 
             if (!string.IsNullOrEmpty(facilityModel.Address)) facility.Address = facilityModel.Address;
             if (!string.IsNullOrEmpty(facilityModel.Brand)) facility.Brand = facilityModel.Brand;
@@ -113,7 +113,7 @@ namespace API.Controllers
             {
                 Facility isExists = facilityService.Get(facilityModel.Code);
 
-                if (isExists != null && id != isExists.Id) return Error("Güncellenmek istenen kod başka bir tesise ait.", null);
+                if (isExists != null && id != isExists.Id) return Error("Güncellenmek istenen kod başka bir tesise ait.");
 
                 facility.Code = facilityModel.Code;
             }
@@ -132,22 +132,22 @@ namespace API.Controllers
 
             facilityService.Update(facility);
 
-            return Success(null, FacilityModel.DtoToModel(facility), 202);
+            return Success(FacilityModel.DtoToModel(facility), 202);
         }
 
         // DELETE: api/Facility/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return Error("Tesis bulunamadı.", null, 404);
+            if (id == Guid.Empty) return Error("Tesis bulunamadı.", 404);
 
             Facility facility = facilityService.Get(id);
 
-            if (facility == null) return Error("Tesis bulunamadı.", null, 404);
+            if (facility == null) return Error("Tesis bulunamadı.", 404);
 
             facilityService.Delete(id);
 
-            return Success(null, null, 204);
+            return Success(null, 204);
         }
     }
 }

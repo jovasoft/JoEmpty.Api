@@ -27,84 +27,84 @@ namespace API.Controllers
         {
             List<Contract> contracts = contractService.GetList();
 
-            if(contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", null, 404);
+            if(contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
 
             List<ContractModel> contractModels = new List<ContractModel>();
 
             contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
 
-            return Success(null, contractModels, 200);
+            return Success(contractModels, 200);
         }
 
         // GET: api/Contract/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
-            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
             Contract contract = contractService.Get(id);
 
-            if (contract == null) return Error("Sözleşme bulunamadı.", null, 404);
+            if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
-            return Success(null, ContractModel.DtoToModel(contract));
+            return Success(ContractModel.DtoToModel(contract));
         }
 
         // GET: api/Contract/GetByClientContracts/clientId
         [HttpGet("GetByClientContracts/{clientId}")]
         public IActionResult GetByClientContracts(Guid clientId)
         {
-            if (clientId == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
+            if (clientId == Guid.Empty) return Error("Müşteri bulunamadı.", 404);
 
             List<Contract> contracts = contractService.GetList(clientId);
 
-            if (contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", null, 404);
+            if (contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
 
             List<ContractModel> contractModels = new List<ContractModel>();
 
             contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
 
-            return Success(null, contractModels, 200);
+            return Success(contractModels, 200);
         }
 
         // POST: api/Contract
         [HttpPost]
         public IActionResult Post([FromBody] ContractModel contractModel)
         {
-            if (contractModel.ClientId == Guid.Empty) return Error("Müşteri bulunamadı.", null, 404);
+            if (contractModel.ClientId == Guid.Empty) return Error("Müşteri bulunamadı.", 404);
 
-            if (contractModel.StartDate > contractModel.FinishDate) return Error("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.", null);
+            if (contractModel.StartDate > contractModel.FinishDate) return Error("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.");
 
             if (!string.IsNullOrEmpty(contractModel.Code))
             {
                 Contract isExists = contractService.Get(contractModel.Code);
 
-                if (isExists != null) return Error("Bu koda ait bir sözleşme zaten var.", null);
+                if (isExists != null) return Error("Bu koda ait bir sözleşme zaten var.");
             }
 
             Contract contract = ContractModel.ModelToDto(contractModel);
             contractService.Add(contract);
 
-            if (contractService.Get(contract.Id) == null) return Error("Sözleşme eklenemedi.", null);
+            if (contractService.Get(contract.Id) == null) return Error("Sözleşme eklenemedi.");
 
-            return Success(null, ContractModel.DtoToModel(contract), 201);
+            return Success(ContractModel.DtoToModel(contract), 201);
         }
 
         // PUT: api/Contract/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ContractModel contractModel)
         {
-            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
             Contract contract = contractService.Get(id);
 
-            if(contract == null) return Error("Sözleşme bulunamadı.", null, 404);
+            if(contract == null) return Error("Sözleşme bulunamadı.", 404);
 
             if (Guid.Empty == contractModel.ClientId) contract.ClientId = contractModel.ClientId;
             if (!string.IsNullOrEmpty(contractModel.Code))
             {
                 Contract isExists = contractService.Get(contractModel.Code);
 
-                if (isExists != null && id != isExists.Id) return Error("Güncellenmek istenen kod başka bir sözleşmeye ait.", null);
+                if (isExists != null && id != isExists.Id) return Error("Güncellenmek istenen kod başka bir sözleşmeye ait.");
 
                 contract.Code = contractModel.Code;
             }
@@ -116,26 +116,26 @@ namespace API.Controllers
             if (contractModel.Supply > 0) contract.Supply = contractModel.Supply;
             if (contractModel.Amount > 0) contract.Amount = contractModel.Amount;
 
-            if (contractModel.StartDate > contractModel.FinishDate) return Error("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.", null);
+            if (contractModel.StartDate > contractModel.FinishDate) return Error("Sözleşme bitiş tarihi başlangıç tarihinden küçük olamaz.");
 
             contractService.Update(contract);
 
-            return Success(null, ContractModel.DtoToModel(contract), 202);
+            return Success(ContractModel.DtoToModel(contract), 202);
         }
 
         // DELETE: api/Contract/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", null, 404);
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
             Contract contract = contractService.Get(id);
 
-            if (contract == null) return Error("Sözleşme bulunamadı.", null, 404);
+            if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
             contractService.Delete(id);
 
-            return Success(null, null, 204);
+            return Success(null, 204);
         }
     }
 }
