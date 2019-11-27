@@ -38,7 +38,7 @@ namespace API.Controllers
             return Success(null, facilityModels, 200);
         }
 
-        // GET: api/Facilities/GetByFacilityId/id
+        // GET: api/Facility/GetByFacilityId/id
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
@@ -51,7 +51,7 @@ namespace API.Controllers
             return Success(null, FacilityModel.DtoToModel(facility));
         }
 
-        // GET: api/Facilities/GetByContractFacilities/contractId
+        // GET: api/Facility/GetByContractFacilities/contractId
         [HttpGet("GetByContractFacilities/{contractId}")]
         public IActionResult GetByContractFacilities(Guid contractId)
         {
@@ -68,7 +68,7 @@ namespace API.Controllers
             return Success(null, facilityModels, 200);
         }
 
-        // POST: api/Facilities
+        // POST: api/Facility
         [HttpPost]
         public IActionResult Post([FromBody] FacilityModel facilityModel)
         {
@@ -97,7 +97,7 @@ namespace API.Controllers
             return Success(null, FacilityModel.DtoToModel(facility), 201);
         }
 
-        // PUT: api/Facilities/id
+        // PUT: api/Facility/id
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] FacilityModel facilityModel)
         {
@@ -135,7 +135,7 @@ namespace API.Controllers
             return Success(null, FacilityModel.DtoToModel(facility), 202);
         }
 
-        // DELETE: api/Facilities/5
+        // DELETE: api/Facility/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

@@ -20,7 +20,7 @@ namespace API.Controllers
             this.personalService = personalService;
         }
 
-        // GET: api/Personals
+        // GET: api/Personal
         [HttpGet]
         public IActionResult Get()
         {
@@ -37,7 +37,7 @@ namespace API.Controllers
             //return Ok(personalModels);
         }
 
-        // GET: api/Personals/GetOne/id
+        // GET: api/Personal/GetOne/id
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
@@ -50,7 +50,7 @@ namespace API.Controllers
             return Success(null,PersonalModel.DtoToModel(personal));
         }
 
-        // POST: api/Personals
+        // POST: api/Personal
         [HttpPost]
         public IActionResult Post([FromBody] PersonalModel personalModel)
         {
@@ -63,7 +63,7 @@ namespace API.Controllers
             return Success(null, PersonalModel.DtoToModel(personal), 201);
         }
 
-        // PUT: api/Personals/id
+        // PUT: api/Personal/id
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] PersonalModel personalModel)
         {
@@ -83,7 +83,7 @@ namespace API.Controllers
             return Success(null,accepted,202);
         }
 
-        // DELETE: api/Personals/5
+        // DELETE: api/Personal/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

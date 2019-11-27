@@ -36,7 +36,7 @@ namespace API.Controllers
             return Success(null, areaModels, 200);
         }
 
-        // GET: api/Areas/GetOne/5
+        // GET: api/Area/GetOne/5
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
@@ -49,7 +49,7 @@ namespace API.Controllers
             return Success(null, AreaModel.DtoToModel(area));
         }
 
-        // POST: api/Areas                    
+        // POST: api/Area                   
         [HttpPost]
         public IActionResult Post([FromBody] AreaModel areaModel)
         {
@@ -70,7 +70,7 @@ namespace API.Controllers
             return Success(null, AreaModel.DtoToModel(area), 201);
         }
 
-        // PUT: api/Areas/5
+        // PUT: api/Area/5
         [HttpPut("{id}")]
         public IActionResult Put(Guid id,[FromBody] AreaModel areaModel)
         {
@@ -98,7 +98,7 @@ namespace API.Controllers
 
         }
 
-        // DELETE: api/Areas/5
+        // DELETE: api/Area/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {

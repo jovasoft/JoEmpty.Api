@@ -21,7 +21,7 @@ namespace API.Controllers
             this.clientContactService = clientContactService;
         }
 
-        // GET: api/ClientsContact/clientId
+        // GET: api/ClientContact/clientId
         [HttpGet("{clientId}")]
         public IActionResult Get(Guid clientId)
         {
@@ -38,7 +38,7 @@ namespace API.Controllers
             return Success(null, clientContactModels, 200);
         }
 
-        // GET: api/ClientsContact/GetOne/id
+        // GET: api/ClientContact/GetOne/id
         [HttpGet("GetOne/{id}")]
         public IActionResult GetOne(Guid id)
         {
@@ -51,7 +51,7 @@ namespace API.Controllers
             return Success(null, ClientContactModel.DtoToModel(clientContact));
         }
 
-        // POST: api/ClientsContact
+        // POST: api/ClientContact
         [HttpPost]
         public IActionResult Post([FromBody] ClientContactModel clientContactModel)
         {
@@ -65,7 +65,7 @@ namespace API.Controllers
             return Success(null, ClientContactModel.DtoToModel(clientContact), 201);
         }
 
-        // PUT: api/ClientsContact/id
+        // PUT: api/ClientContact/id
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] ClientContactModel clientContactModel)
         {
@@ -88,7 +88,7 @@ namespace API.Controllers
             return Success(null, ClientContactModel.DtoToModel(clientContact), 202);
         }
 
-        // DELETE: api/ClientsContact/id
+        // DELETE: api/ClientContact/id
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
