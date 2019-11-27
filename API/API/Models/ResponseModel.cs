@@ -11,22 +11,11 @@ namespace API.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; set; }
 
-
         public int Code { get; set; }
-
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public object Data { get; set; }
 
-            
         public bool Success { get; set; }
-
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<ResponseErrorModel> Errors { get; set; }
     }
-
-    
-
-      
 }
