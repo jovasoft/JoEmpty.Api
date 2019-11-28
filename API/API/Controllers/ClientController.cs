@@ -57,7 +57,7 @@ namespace API.Controllers
             {
                 Client isExists = clientService.Get(clientModel.CurrentCode);
 
-                if (isExists != null) Error("Bu cari koda ait bir müşteri zaten var.");
+                if (isExists != null) return Error("Bu cari koda ait bir müşteri zaten var.");
             }
 
             Client client = ClientModel.ModelToDto(clientModel);
