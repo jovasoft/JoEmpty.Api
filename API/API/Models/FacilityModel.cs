@@ -23,7 +23,7 @@ namespace API.Models
         public string Address { get; set; }
 
         [Required]
-        public string City { get; set; }
+        public string Province { get; set; }
 
         [Required]
         public string District { get; set; }
@@ -68,7 +68,7 @@ namespace API.Models
                 Station = facility.Station,
                 Type = facility.Type,
                 WarrantyFinishDate = facility.WarrantyFinishDate,
-                City = facility.City,
+                Province = facility.Province,
                 District = facility.District
             };
         }
@@ -93,7 +93,7 @@ namespace API.Models
                 Station = facilityModel.Station,
                 Type = facilityModel.Type,
                 WarrantyFinishDate = facilityModel.WarrantyFinishDate,
-                City = facilityModel.City,
+                Province = facilityModel.Province,
                 District = facilityModel.District
             };
         }

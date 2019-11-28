@@ -15,7 +15,7 @@ namespace API.Models
         public string Title { get; set; }
 
         public string Address { get; set; }
-        public string City { get; set; }
+        public string Province { get; set; }
         public string District { get; set; }
         public string Note { get; set; }
         public string CurrentCode { get; set; }
@@ -30,7 +30,7 @@ namespace API.Models
                 Title = client.Title,
                 Address = client.Address,
                 CurrentCode = client.CurrentCode,
-                City = client.City,
+                Province = client.Province,
                 District = client.District
             };
         }
@@ -44,7 +44,7 @@ namespace API.Models
                 Title = clientModel.Title,
                 Address = clientModel.Address,
                 CurrentCode = clientModel.CurrentCode,
-                City = clientModel.City,
+                Province = clientModel.Province,
                 District = clientModel.District
             };
         }

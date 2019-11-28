@@ -89,7 +89,7 @@ namespace API.Controllers
             if (!string.IsNullOrEmpty(clientModel.Address)) client.Address = clientModel.Address;
             if (!string.IsNullOrEmpty(clientModel.Note)) client.Note = clientModel.Note;
             if (!string.IsNullOrEmpty(clientModel.Title)) client.Title = clientModel.Title;
-            if (!string.IsNullOrEmpty(clientModel.City)) client.City = clientModel.City;
+            if (!string.IsNullOrEmpty(clientModel.Province)) client.Province = clientModel.Province;
             if (!string.IsNullOrEmpty(clientModel.District)) client.District = clientModel.District;
 
             clientService.Update(client);

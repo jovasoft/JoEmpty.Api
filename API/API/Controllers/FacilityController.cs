@@ -108,7 +108,7 @@ namespace API.Controllers
             if (facility == null) return Error("Tesis bulunamadı.", 404);
 
             if (!string.IsNullOrEmpty(facilityModel.Address)) facility.Address = facilityModel.Address;
-            if (!string.IsNullOrEmpty(facilityModel.City)) facility.City = facilityModel.City;
+            if (!string.IsNullOrEmpty(facilityModel.Province)) facility.Province = facilityModel.Province;
             if (!string.IsNullOrEmpty(facilityModel.District)) facility.District = facilityModel.District;
             if (!string.IsNullOrEmpty(facilityModel.Brand)) facility.Brand = facilityModel.Brand;
             if (!string.IsNullOrEmpty(facilityModel.Name)) facility.Name = facilityModel.Name;
