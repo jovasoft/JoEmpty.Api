@@ -73,7 +73,7 @@ namespace API.Controllers
 
             ClientContact clientContact = clientContactService.Get(id);
 
-            if (clientContact == null) Error("Yetkili kişi bulunamadı.", 404);
+            if (clientContact == null) return Error("Yetkili kişi bulunamadı.", 404);
 
             if (!string.IsNullOrEmpty(clientContactModel.Department)) clientContact.Department = clientContactModel.Department;
             if (!string.IsNullOrEmpty(clientContactModel.FirstName)) clientContact.FirstName = clientContactModel.FirstName;
