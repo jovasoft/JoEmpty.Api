@@ -15,8 +15,11 @@ namespace API.Models
         public string Title { get; set; }
 
         public string Address { get; set; }
+        public string City { get; set; }
+        public string District { get; set; }
         public string Note { get; set; }
         public string CurrentCode { get; set; }
+
 
         public static ClientModel DtoToModel(Client client)
         {
@@ -26,7 +29,9 @@ namespace API.Models
                 Note = client.Note,
                 Title = client.Title,
                 Address = client.Address,
-                CurrentCode = client.CurrentCode
+                CurrentCode = client.CurrentCode,
+                City = client.City,
+                District = client.District
             };
         }
 
@@ -38,7 +43,9 @@ namespace API.Models
                 Note = clientModel.Note,
                 Title = clientModel.Title,
                 Address = clientModel.Address,
-                CurrentCode = clientModel.CurrentCode
+                CurrentCode = clientModel.CurrentCode,
+                City = clientModel.City,
+                District = clientModel.District
             };
         }
     }
