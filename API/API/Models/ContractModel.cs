@@ -35,6 +35,10 @@ namespace API.Models
         [Required]
         public decimal Amount { get; set; }
 
+        public string FormattedStartDate { get { return StartDate.Value.ToString("dd MMMM yyyy"); } }
+
+        public string FormattedFinishDate { get { return FinishDate.Value.ToString("dd MMMM yyyy"); } }
+
         public static ContractModel DtoToModel(Contract contract)
         {
             return new ContractModel

@@ -48,6 +48,8 @@ namespace API.Models
         public decimal OldMaintenanceFee { get; set; }
         public string Brand { get; set; }
 
+        public string FormattedWarrantyFinishDate { get { return WarrantyFinishDate.Value.ToString("dd MMMM yyyy"); } }
+
         public static FacilityModel DtoToModel(Facility facility)
         {
             return new FacilityModel
