@@ -13,6 +13,8 @@ namespace Business.Abstract
 
         List<Facility> GetList(Guid contractId);
 
+        List<Facility> GetFacilitiesByClient(Guid clientId);
+
         Facility Get(Guid id);
 
         void Delete(Guid id);

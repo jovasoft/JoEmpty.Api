@@ -10,6 +10,7 @@ namespace Entities
         public Guid Id { get; set; }
         public Guid ContractId { get; set; }
         public Guid AreaId { get; set; }
+        public Guid ClientId { get; set; }
         public string Address { get; set; }
         public string Province { get; set; }
         public string District { get; set; }

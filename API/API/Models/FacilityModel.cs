@@ -12,6 +12,7 @@ namespace API.Models
         public Guid Id { get; set; }
         public Guid ContractId { get; set; }
         public Guid AreaId { get; set; }
+        public Guid ClientId { get; set; }
 
         [Required]
         public string Code { get; set; }
@@ -56,6 +57,7 @@ namespace API.Models
             {
                 Address = facility.Address,
                 AreaId = facility.AreaId,
+                ClientId = facility.ClientId,
                 Brand = facility.Brand,
                 BreakdownFee = facility.BreakdownFee,
                 Capacity = facility.Capacity,
@@ -82,6 +84,7 @@ namespace API.Models
                 Id = new Guid(),
                 Address = facilityModel.Address,
                 AreaId = facilityModel.AreaId,
+                ClientId = facilityModel.ClientId,
                 Brand = facilityModel.Brand,
                 BreakdownFee = facilityModel.BreakdownFee,
                 Capacity = facilityModel.Capacity,

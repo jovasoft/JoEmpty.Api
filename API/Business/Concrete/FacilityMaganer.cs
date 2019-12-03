@@ -36,6 +36,11 @@ namespace Business.Concrete
             return facilityDal.GetList(x => x.ContractId == contractId);
         }
 
+        public List<Facility> GetFacilitiesByClient(Guid clientId)
+        {
+            return facilityDal.GetList(x => x.ClientId == clientId);
+        }
+
         public Facility Get(Guid id)
         {
             return facilityDal.Get(x => x.Id == id);

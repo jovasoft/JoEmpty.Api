@@ -51,13 +51,30 @@ namespace API.Controllers
             return Success(FacilityModel.DtoToModel(facility));
         }
 
-        // GET: api/Facility/GetByContractFacilities/contractId
-        [HttpGet("GetByContractFacilities/{contractId}")]
-        public IActionResult GetByContractFacilities(Guid contractId)
+        // GET: api/Facility/GetFacilitiesByContract/contractId
+        [HttpGet("GetFacilitiesByContract/{contractId}")]
+        public IActionResult GetFacilitiesByContract(Guid contractId)
         {
             if (contractId == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
             List<Facility> facilities = facilityService.GetList(contractId);
+
+            if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
+
+            List<FacilityModel> facilityModels = new List<FacilityModel>();
+
+            facilities.ForEach(x => { facilityModels.Add(FacilityModel.DtoToModel(x)); });
+
+            return Success(facilityModels);
+        }
+
+        // GET: api/Facility/GetFacilitiesByClient/contractId
+        [HttpGet("GetFacilitiesByClient/{clientId}")]
+        public IActionResult GetFacilitiesByClient(Guid clientId)
+        {
+            if (clientId == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
+
+            List<Facility> facilities = facilityService.GetFacilitiesByClient(clientId);
 
             if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
 
