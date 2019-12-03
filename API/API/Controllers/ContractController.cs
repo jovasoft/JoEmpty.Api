@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Models;
@@ -134,6 +135,54 @@ namespace API.Controllers
             if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
             contractService.Delete(id);
+
+            return Success(null, 204);
+        }
+
+        [HttpGet("GetFiles/{id}")]
+        public IActionResult GetFiles(Guid id)
+        {
+            var filePath = AppDomain.CurrentDomain.BaseDirectory;
+            string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", id.ToString()));
+            return Success();
+        }   
+
+        [HttpPost("Upload/{id}")]
+        public IActionResult Upload(Guid id, [FromForm]UploadFileModel files)
+        {
+            var filePath = AppDomain.CurrentDomain.BaseDirectory;
+            Directory.CreateDirectory(Path.Combine(filePath, "Contracts"));
+            Directory.CreateDirectory(Path.Combine(filePath, "Contracts", id.ToString()));
+
+            string uploadError = string.Empty;
+            for (int i = 0; i < files.Files.Count; i++)
+            {
+
+                try
+                {
+                    if (files.Files[i].Length > 0)
+                    {
+                        //burada get yapıp adamın klasöründe kaç tane dosya var öğren isimlendirmeyi ona göre yap
+                        FileInfo fileInfo = new FileInfo(files.Files[i].FileName);
+                        var combined = Path.Combine(filePath, "Contracts", id.ToString(), (i + 1) + fileInfo.Extension);
+
+                        using (var stream = System.IO.File.Create(combined))
+                        {
+                            files.Files[i].CopyTo(stream);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    if(uploadError.Length == 0) uploadError += files.Files[i].FileName;
+                    else uploadError += ", " + files.Files[i].FileName;
+                }
+            }
+
+            if(uploadError.Length > 0)
+            {
+                return Error(uploadError + " isimli dosyalar yüklenemedi.", 400);
+            }
 
             return Success(null, 204);
         }
