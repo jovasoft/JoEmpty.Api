@@ -31,8 +31,8 @@ namespace API.Models
         {
             return new Personal
             {
+                Id = Guid.NewGuid(),
                 FirstName = personalModel.FirstName,
-                Id = personalModel.Id,
                 LastName = personalModel.LastName
             };
         }
