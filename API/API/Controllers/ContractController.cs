@@ -137,6 +137,7 @@ namespace API.Controllers
             return Success(null, 204);
         }
 
+        // GET: api/Contract/GetFiles/5
         [HttpGet("GetFiles/{id}")]
         public IActionResult GetFiles(Guid id)
         {
@@ -154,9 +155,15 @@ namespace API.Controllers
             return Success(fileUrls);
         }
 
+        // POST: api/Contract/Upload/5
         [HttpPost("Upload/{id}")]
         public IActionResult Upload(Guid id, [FromForm]UploadFileModel files)
         {
+
+            Contract contract = contractService.Get(id);
+
+            if (contract == null) return Error("Sözleşme bulunamadı.", 404);
+
             var filePath = AppDomain.CurrentDomain.BaseDirectory;
             Directory.CreateDirectory(Path.Combine(filePath, "Contracts"));
             Directory.CreateDirectory(Path.Combine(filePath, "Contracts", id.ToString()));
@@ -188,7 +195,31 @@ namespace API.Controllers
                 return Error(uploadError + " isimli dosyalar yüklenemedi.", 400);
             }
 
-            return Success(null, 204);
+            return Success(null, 201);
+        }
+
+        // DELETE: api/Contract/DeleteFile/contractId/5
+        [HttpDelete("DeleteFile/{contractId}/{id}")]
+        public IActionResult DeleteFile(Guid contractId, Guid id)
+        {
+            var filePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            if (Directory.Exists(Path.Combine(filePath, "Contracts", contractId.ToString())))
+            {
+                string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", contractId.ToString()));
+
+                foreach (var fileEntry in fileEntries)
+                {
+                    if (fileEntry.Contains(id.ToString()))
+                    {
+                        System.IO.File.Delete(fileEntry);
+                        return Success(null, 204);
+                    }  
+                }
+
+                return Error("Dosya bulunamadı.", 404);
+            }
+            else return Error("Sözleşme bulunamadı.", 404);
         }
     }
 }
