@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class PersonalController : ResponseController
     {
         private IPersonalService personalService;

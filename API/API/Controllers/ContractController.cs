@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class ContractController : ResponseController
     {
         private IContractService contractService;
@@ -144,8 +142,17 @@ namespace API.Controllers
         {
             var filePath = AppDomain.CurrentDomain.BaseDirectory;
             string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", id.ToString()));
-            return Success();
-        }   
+
+            string[] fileUrls = new string[fileEntries.Length];
+
+            for (int i = 0; i < fileEntries.Length; i++)
+            {
+                string url = fileEntries[i].Replace(filePath, BaseAddress).Replace('\\', '/').Replace("Contracts", "api/ContractFiles");
+                fileUrls[i] = url;
+            }
+
+            return Success(fileUrls);
+        }
 
         [HttpPost("Upload/{id}")]
         public IActionResult Upload(Guid id, [FromForm]UploadFileModel files)
@@ -157,19 +164,16 @@ namespace API.Controllers
             string uploadError = string.Empty;
             for (int i = 0; i < files.Files.Count; i++)
             {
-
                 try
                 {
                     if (files.Files[i].Length > 0)
                     {
-                        //burada get yapıp adamın klasöründe kaç tane dosya var öğren isimlendirmeyi ona göre yap
                         FileInfo fileInfo = new FileInfo(files.Files[i].FileName);
-                        var combined = Path.Combine(filePath, "Contracts", id.ToString(), (i + 1) + fileInfo.Extension);
 
-                        using (var stream = System.IO.File.Create(combined))
-                        {
-                            files.Files[i].CopyTo(stream);
-                        }
+                        string combined = Path.Combine(filePath, "Contracts", id.ToString(), Guid.NewGuid().ToString() + fileInfo.Extension);
+
+                        using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
+
                     }
                 }
                 catch (Exception)

@@ -12,6 +12,8 @@ namespace API.Controllers
     [ApiController]
     public class ResponseController : ControllerBase
     {
+        public string BaseAddress { get { return Request.Scheme + "://" + Request.Host.Value + "/"; } }
+
         public IActionResult Success(object data = default(object), int code = 200)
         {
             var response = new ResponseModel()

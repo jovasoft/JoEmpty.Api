@@ -113,12 +113,7 @@ namespace API
 
             app.UseAuthentication();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts")),
-                RequestPath = "/ContractFiles"
-            });
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts")), RequestPath = "/api/ContractFiles" });
 
             app.UseMvc();
         }
