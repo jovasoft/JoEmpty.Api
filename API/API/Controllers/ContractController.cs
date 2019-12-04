@@ -48,9 +48,9 @@ namespace API.Controllers
             return Success(ContractModel.DtoToModel(contract));
         }
 
-        // GET: api/Contract/GetByClientContracts/clientId
-        [HttpGet("GetByClientContracts/{clientId}")]
-        public IActionResult GetByClientContracts(Guid clientId)
+        // GET: api/Contract/GetContractsByClient/clientId
+        [HttpGet("GetContractsByClient/{clientId}")]
+        public IActionResult GetContractsByClient(Guid clientId)
         {
             if (clientId == Guid.Empty) return Error("Müşteri bulunamadı.", 404);
 
@@ -141,7 +141,7 @@ namespace API.Controllers
         [HttpGet("GetFiles/{id}")]
         public IActionResult GetFiles(Guid id)
         {
-            var filePath = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = AppDomain.CurrentDomain.BaseDirectory;
             string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", id.ToString()));
 
             string[] fileUrls = new string[fileEntries.Length];
@@ -157,14 +157,17 @@ namespace API.Controllers
 
         // POST: api/Contract/Upload/5
         [HttpPost("Upload/{id}")]
-        public IActionResult Upload(Guid id, [FromForm]UploadFileModel files)
+        public IActionResult UploadFiles(Guid id, [FromForm]UploadFileModel files)
         {
+            if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
+
+            if (files.Files.Count == 0) return Error("Yüklenecek bulunamadı.", 404);
 
             Contract contract = contractService.Get(id);
 
             if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
-            var filePath = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = AppDomain.CurrentDomain.BaseDirectory;
             Directory.CreateDirectory(Path.Combine(filePath, "Contracts"));
             Directory.CreateDirectory(Path.Combine(filePath, "Contracts", id.ToString()));
 
@@ -180,7 +183,6 @@ namespace API.Controllers
                         string combined = Path.Combine(filePath, "Contracts", id.ToString(), Guid.NewGuid().ToString() + fileInfo.Extension);
 
                         using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
-
                     }
                 }
                 catch (Exception)
@@ -190,10 +192,7 @@ namespace API.Controllers
                 }
             }
 
-            if(uploadError.Length > 0)
-            {
-                return Error(uploadError + " isimli dosyalar yüklenemedi.", 400);
-            }
+            if(uploadError.Length > 0) return Error(uploadError + " isimli dosyalar yüklenemedi.", 400);
 
             return Success(null, 201);
         }
@@ -202,11 +201,15 @@ namespace API.Controllers
         [HttpDelete("DeleteFile/{contractId}/{id}")]
         public IActionResult DeleteFile(Guid contractId, Guid id)
         {
-            var filePath = AppDomain.CurrentDomain.BaseDirectory;
+            if (contractId == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
-            if (Directory.Exists(Path.Combine(filePath, "Contracts", contractId.ToString())))
+            if (id == Guid.Empty) return Error("Dosya bulunamadı.", 404);
+
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts", contractId.ToString());
+
+            if (Directory.Exists(filePath))
             {
-                string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", contractId.ToString()));
+                string[] fileEntries = Directory.GetFiles(filePath);
 
                 foreach (var fileEntry in fileEntries)
                 {
