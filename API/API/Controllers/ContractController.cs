@@ -144,20 +144,22 @@ namespace API.Controllers
             string filePath = AppDomain.CurrentDomain.BaseDirectory;
             string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", id.ToString()));
 
-            string[] fileUrls = new string[fileEntries.Length];
+            List <object> files = new List<object>();
 
             for (int i = 0; i < fileEntries.Length; i++)
             {
                 string url = fileEntries[i].Replace(filePath, BaseAddress).Replace('\\', '/').Replace("Contracts", "api/ContractFiles");
-                fileUrls[i] = url;
+                string fileId = fileEntries[i].Replace(Path.Combine(filePath, "Contracts", id.ToString()), "").Remove(0, 1).Split('.')[0];
+
+                files.Add(new { url, id = fileId });
             }
 
-            return Success(fileUrls);
+            return Success(new { ContractId = id, files });
         }
 
-        // POST: api/Contract/Upload/5
+        // POST: api/Contract/UploadFile/5
         [HttpPost("Upload/{id}")]
-        public IActionResult UploadFiles(Guid id, [FromForm]UploadFileModel files)
+        public IActionResult UploadFile(Guid id, [FromForm]UploadFileModel files)
         {
             if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
