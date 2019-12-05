@@ -157,28 +157,49 @@ namespace API.Controllers
             return Success(new { ContractId = id, files });
         }
 
-        // POST: api/Contract/UploadFile/5
-        [HttpPost("UploadFile/{id}")]
-        public IActionResult UploadFile(Guid id, [FromForm]IFormFile file)
+        // POST: api/Contract/Upload/5
+        [HttpPost("Upload/{id}")]
+        public IActionResult Upload(Guid id, [FromForm]UploadFileModel files)
         {
+
             if (id == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
-            if (file == null || file.Length == 0) return Error("Yüklenecek dosya bulunamadı.", 404);
+            if (files == null || files.Files.Count == 0) return Error("Yüklenecek dosya bulunamadı.", 404);
 
             Contract contract = contractService.Get(id);
 
             if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
-            string filePath = AppDomain.CurrentDomain.BaseDirectory;
+            var filePath = AppDomain.CurrentDomain.BaseDirectory;
             Directory.CreateDirectory(Path.Combine(filePath, "Contracts"));
             Directory.CreateDirectory(Path.Combine(filePath, "Contracts", id.ToString()));
 
-            FileInfo fileInfo = new FileInfo(file.FileName);
+            string uploadError = string.Empty;
+            for (int i = 0; i < files.Files.Count; i++)
+            {
+                try
+                {
+                    if (files.Files[i].Length > 0)
+                    {
+                        FileInfo fileInfo = new FileInfo(files.Files[i].FileName);
 
-            string combined = Path.Combine(filePath, "Contracts", id.ToString(), Guid.NewGuid().ToString() + fileInfo.Extension);
+                        string combined = Path.Combine(filePath, "Contracts", id.ToString(), Guid.NewGuid().ToString() + fileInfo.Extension);
 
-            try { using (var stream = System.IO.File.Create(combined)) file.CopyTo(stream); }
-            catch (Exception) { return Error(file.FileName + " yüklenemedi.", 400); }
+                        using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
+
+                    }
+                }
+                catch (Exception)
+                {
+                    if (uploadError.Length == 0) uploadError += files.Files[i].FileName;
+                    else uploadError += ", " + files.Files[i].FileName;
+                }
+            }
+
+            if (uploadError.Length > 0)
+            {
+                return Error(uploadError + " isimli dosyalar yüklenemedi.", 400);
+            }
 
             return Success(null, 201);
         }
