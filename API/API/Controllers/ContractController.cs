@@ -151,7 +151,9 @@ namespace API.Controllers
                 string url = fileEntries[i].Replace(filePath, BaseAddress).Replace('\\', '/').Replace("Contracts", "api/ContractFiles");
                 string fileId = fileEntries[i].Replace(Path.Combine(filePath, "Contracts", id.ToString()), "").Remove(0, 1).Split('.')[0];
 
-                files.Add(new { url, id = fileId });
+                FileInfo fileInfo = new FileInfo(fileEntries[i]);
+
+                files.Add(new { url, id = fileId, size = fileInfo.Length, name = fileInfo.Name, type = fileInfo.Extension });
             }
 
             return Success(new { ContractId = id, files });
