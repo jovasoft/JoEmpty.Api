@@ -153,7 +153,7 @@ namespace API.Controllers
 
                 FileInfo fileInfo = new FileInfo(fileEntries[i]);
 
-                files.Add(new { url, id = fileId, size = fileInfo.Length, name = fileInfo.Name, type = fileInfo.Extension });
+                files.Add(new { url, id = fileId, size = fileInfo.Length, name = fileInfo.Name, type = Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension) });
             }
 
             return Success(new { ContractId = id, files });
