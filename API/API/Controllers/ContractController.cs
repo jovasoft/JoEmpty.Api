@@ -142,6 +142,7 @@ namespace API.Controllers
         public IActionResult GetFiles(Guid id)
         {
             string filePath = AppDomain.CurrentDomain.BaseDirectory;
+            if (!Directory.Exists(Path.Combine(filePath, "Contracts", id.ToString()))) return Error("Dosya bulunamadı.", 404);
             string[] fileEntries = Directory.GetFiles(Path.Combine(filePath, "Contracts", id.ToString()));
 
             List <object> files = new List<object>();
