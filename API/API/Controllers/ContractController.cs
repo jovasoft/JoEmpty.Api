@@ -186,7 +186,7 @@ namespace API.Controllers
                     {
                         FileInfo fileInfo = new FileInfo(files.Files[i].FileName);
 
-                        string combined = Path.Combine(filePath, "Contracts", id.ToString(), Guid.NewGuid().ToString() + fileInfo.Extension);
+                        string combined = Path.Combine(filePath, "Contracts", id.ToString(), files.Files[i].FileName);
 
                         using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
 

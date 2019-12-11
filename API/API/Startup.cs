@@ -113,7 +113,22 @@ namespace API
 
             app.UseAuthentication();
 
-            app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts")), RequestPath = "/api/ContractFiles" });
+            //app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts")), RequestPath = "/api/ContractFiles" });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = x =>
+                {
+                    if (!x.Context.User.Identity.IsAuthenticated)
+                    {
+                        x.Context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        x.Context.RequestAborted = new System.Threading.CancellationToken(true);
+                    }
+                    
+                },
+                FileProvider = new PhysicalFileProvider(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts")),
+                RequestPath = "/api/ContractFiles"
+            });
 
             app.UseMvc();
         }
