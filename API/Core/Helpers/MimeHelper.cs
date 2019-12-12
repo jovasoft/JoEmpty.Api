@@ -16,8 +16,6 @@ namespace Core.Helpers
             mimeTypes.Add(".doc", "application/msword");
             mimeTypes.Add(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             mimeTypes.Add(".txt", "text/plain");
-            mimeTypes.Add(".htm", "text/html");
-            mimeTypes.Add(".html", "text/html");
 
             string value = string.Empty;
             try

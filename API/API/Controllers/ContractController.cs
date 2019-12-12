@@ -186,10 +186,11 @@ namespace API.Controllers
                     {
                         FileInfo fileInfo = new FileInfo(files.Files[i].FileName);
 
+                        if (string.IsNullOrEmpty(Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension))) throw new Exception("unavailable file type");
+
                         string combined = Path.Combine(filePath, "Contracts", id.ToString(), files.Files[i].FileName);
 
                         using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
-
                     }
                 }
                 catch (Exception)
