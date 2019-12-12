@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ResponseController : ControllerBase
     {
         public string BaseAddress { get { return Request.Scheme + "://" + Request.Host.Value + "/"; } }
