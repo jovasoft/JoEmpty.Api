@@ -17,7 +17,7 @@ namespace Entities
         public string Code { get; set; }
         public string Name { get; set; }
         public int Station { get; set; }
-        public int Speed { get; set; }
+        public float Speed { get; set; }
         public int Capacity { get; set; }
         public DateTime? WarrantyFinishDate { get; set; }
         public MaintenanceStatuses MaintenanceStatus { get; set; }
