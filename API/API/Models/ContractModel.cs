@@ -22,9 +22,6 @@ namespace API.Models
         public DateTime? FinishDate { get; set; }
 
         [Required]
-        public int FacilityCount { get; set; }
-
-        [Required]
         [Range(1, 3)]
         public Currencies Currency { get; set; }
 
@@ -34,6 +31,8 @@ namespace API.Models
 
         [Required]
         public decimal Amount { get; set; }
+
+        public int FacilityCount { get; set; }
 
         public string FormattedStartDate { get { return StartDate.Value.ToString("dd MMMM yyyy"); } }
 

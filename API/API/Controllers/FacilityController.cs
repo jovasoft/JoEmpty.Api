@@ -100,9 +100,8 @@ namespace API.Controllers
 
             if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
-            int facilityCount = facilityService.GetList(facilityModel.ContractId).Count;
-
-            if (facilityCount == contract.FacilityCount) return Error("Bu sözleşmeye daha fazla tesis eklenemez.");
+            contract.FacilityCount++;
+            contractService.Update(contract);
 
             Facility facility = FacilityModel.ModelToDto(facilityModel);
             facilityService.Add(facility);
@@ -161,6 +160,13 @@ namespace API.Controllers
             Facility facility = facilityService.Get(id);
 
             if (facility == null) return Error("Tesis bulunamadı.", 404);
+
+            Contract contract = contractService.Get(facility.ContractId);
+
+            if (contract == null) return Error("Sözleşme bulunamadı.", 404);
+
+            contract.FacilityCount--;
+            contractService.Update(contract);
 
             facilityService.Delete(id);
 

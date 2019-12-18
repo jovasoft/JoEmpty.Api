@@ -110,7 +110,6 @@ namespace API.Controllers
 
             if (contractModel.StartDate != null) contract.StartDate = contractModel.StartDate;
             if (contractModel.FinishDate != null) contract.FinishDate = contractModel.FinishDate;
-            if (contractModel.FacilityCount > 0) contract.FacilityCount = contractModel.FacilityCount;
             if (contractModel.Currency > 0) contract.Currency = contractModel.Currency;
             if (contractModel.Supply > 0) contract.Supply = contractModel.Supply;
             if (contractModel.Amount > 0) contract.Amount = contractModel.Amount;
@@ -173,9 +172,7 @@ namespace API.Controllers
 
             if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
-            var filePath = AppDomain.CurrentDomain.BaseDirectory;
-            Directory.CreateDirectory(Path.Combine(filePath, "Contracts"));
-            Directory.CreateDirectory(Path.Combine(filePath, "Contracts", id.ToString()));
+            Directory.CreateDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts", id.ToString()));
 
             string uploadError = string.Empty;
             for (int i = 0; i < files.Files.Count; i++)
@@ -188,7 +185,7 @@ namespace API.Controllers
 
                         if (string.IsNullOrEmpty(Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension))) throw new Exception("unavailable file type");
 
-                        string combined = Path.Combine(filePath, "Contracts", id.ToString(), files.Files[i].FileName);
+                        string combined = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts", id.ToString(), files.Files[i].FileName);
 
                         using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
                     }

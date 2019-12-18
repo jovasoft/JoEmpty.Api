@@ -14,6 +14,8 @@ namespace API
     {
         public static void Main(string[] args)
         {
+            Directory.CreateDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts"));
+
             CreateWebHostBuilder(args).Build().Run();
         }
 

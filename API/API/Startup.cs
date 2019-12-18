@@ -60,7 +60,7 @@ namespace API
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
                 };
 
                 x.Events = new JwtBearerEvents()
@@ -68,7 +68,7 @@ namespace API
                     OnTokenValidated = (context) =>
                     {
                         var name = context.Principal.Identity.Name;
-                        if (string.IsNullOrEmpty(name)) context.Fail("Unauthorized. Please re-login.");
+                        if (string.IsNullOrEmpty(name)) context.Fail("Lütfen yeniden giriş yapın.");
                         return Task.CompletedTask;
                     }
                 };
