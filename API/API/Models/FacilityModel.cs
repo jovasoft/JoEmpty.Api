@@ -43,7 +43,7 @@ namespace API.Models
         public decimal BreakdownFee { get; set; }
 
         public int Station { get; set; }
-        public float Speed { get; set; }
+        public string Speed { get; set; }
         public int Capacity { get; set; }
         public DateTime? WarrantyFinishDate { get; set; }
         public decimal OldMaintenanceFee { get; set; }
@@ -68,7 +68,7 @@ namespace API.Models
                 MaintenanceStatus = facility.MaintenanceStatus,
                 Name = facility.Name,
                 OldMaintenanceFee = facility.OldMaintenanceFee,
-                Speed = facility.Speed,
+                Speed = facility.Speed.ToString(),
                 Station = facility.Station,
                 Type = facility.Type,
                 WarrantyFinishDate = facility.WarrantyFinishDate,
@@ -94,7 +94,7 @@ namespace API.Models
                 MaintenanceStatus = facilityModel.MaintenanceStatus,
                 Name = facilityModel.Name,
                 OldMaintenanceFee = facilityModel.OldMaintenanceFee,
-                Speed = facilityModel.Speed,
+                Speed = float.Parse(facilityModel.Speed),
                 Station = facilityModel.Station,
                 Type = facilityModel.Type,
                 WarrantyFinishDate = facilityModel.WarrantyFinishDate,

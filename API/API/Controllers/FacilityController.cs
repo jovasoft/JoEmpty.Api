@@ -142,7 +142,7 @@ namespace API.Controllers
             if (facilityModel.CurrentMaintenanceFee > 0) facility.CurrentMaintenanceFee = facilityModel.CurrentMaintenanceFee;
             if (facilityModel.MaintenanceStatus > 0) facility.MaintenanceStatus = facilityModel.MaintenanceStatus;
             if (facilityModel.OldMaintenanceFee > 0) facility.OldMaintenanceFee = facilityModel.OldMaintenanceFee;
-            if (facilityModel.Speed > 0) facility.Speed = facilityModel.Speed;
+            if (float.Parse(facilityModel.Speed) > 0) facility.Speed = float.Parse(facilityModel.Speed);
             if (facilityModel.Station > 0) facility.Station = facilityModel.Station;
             if (facilityModel.Type > 0) facility.Type = facilityModel.Type;
 
