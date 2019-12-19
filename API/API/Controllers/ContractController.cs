@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using API.Models;
 using Business.Abstract;
 using Entities;
@@ -153,7 +154,9 @@ namespace API.Controllers
 
                 FileInfo fileInfo = new FileInfo(fileEntries[i]);
 
-                files.Add(new { url, id = fileId, size = fileInfo.Length, name = fileInfo.Name, type = Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension) });
+                string decoded = HttpUtility.UrlDecode(fileInfo.Name);
+
+                files.Add(new { url, id = fileId, size = fileInfo.Length, name = decoded, type = Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension) });
             }
 
             return Success(new { ContractId = id, files });
@@ -185,7 +188,9 @@ namespace API.Controllers
 
                         if (string.IsNullOrEmpty(Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension))) throw new Exception("unavailable file type");
 
-                        string combined = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts", id.ToString(), files.Files[i].FileName);
+                        string encoded = HttpUtility.UrlEncode(files.Files[i].FileName);
+
+                        string combined = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts", id.ToString(), encoded);
 
                         using (var stream = System.IO.File.Create(combined)) files.Files[i].CopyTo(stream);
                     }
