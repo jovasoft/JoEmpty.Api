@@ -150,13 +150,12 @@ namespace API.Controllers
             for (int i = 0; i < fileEntries.Length; i++)
             {
                 string url = fileEntries[i].Replace(filePath, BaseAddress).Replace('\\', '/').Replace("Contracts", "api/ContractFiles");
-                string fileId = fileEntries[i].Replace(Path.Combine(filePath, "Contracts", id.ToString()), "").Remove(0, 1).Split('.')[0];
 
                 FileInfo fileInfo = new FileInfo(fileEntries[i]);
 
                 string decoded = HttpUtility.UrlDecode(fileInfo.Name);
 
-                files.Add(new { url, id = fileId, size = fileInfo.Length, name = decoded, type = Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension) });
+                files.Add(new { url, id = fileInfo.Name, size = fileInfo.Length, name = decoded, type = Core.Helpers.MimeHelper.GetMimeFromType(fileInfo.Extension) });
             }
 
             return Success(new { ContractId = id, files });
@@ -212,11 +211,11 @@ namespace API.Controllers
 
         // DELETE: api/Contract/DeleteFile/contractId/5
         [HttpDelete("DeleteFile/{contractId}/{id}")]
-        public IActionResult DeleteFile(Guid contractId, Guid id)
+        public IActionResult DeleteFile(Guid contractId, string id)
         {
             if (contractId == Guid.Empty) return Error("Sözleşme bulunamadı.", 404);
 
-            if (id == Guid.Empty) return Error("Dosya bulunamadı.", 404);
+            if (string.IsNullOrEmpty(id)) return Error("Dosya bulunamadı.", 404);
 
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contracts", contractId.ToString());
 
