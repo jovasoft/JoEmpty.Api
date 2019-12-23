@@ -49,6 +49,17 @@ namespace API.Controllers
             return Success(FacilityModel.DtoToModel(facility));
         }
 
+        // GET: api/Facility/GetTotalCount
+        [HttpGet("GetTotalCount")]
+        public IActionResult GetTotalCount()
+        {
+            List<Facility> facilities = facilityService.GetList();
+
+            if (facilities == null || facilities.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
+
+            return Success(new { total = facilities.Count });
+        }
+
         // GET: api/Facility/GetFacilitiesByContract/contractId
         [HttpGet("GetFacilitiesByContract/{contractId}")]
         public IActionResult GetFacilitiesByContract(Guid contractId)

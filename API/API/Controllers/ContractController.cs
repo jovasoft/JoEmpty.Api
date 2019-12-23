@@ -33,7 +33,7 @@ namespace API.Controllers
 
             contracts.ForEach(x => { contractModels.Add(ContractModel.DtoToModel(x)); });
 
-            return Success(contractModels, 200);
+            return Success(contractModels);
         }
 
         // GET: api/Contract/5
@@ -47,6 +47,37 @@ namespace API.Controllers
             if (contract == null) return Error("Sözleşme bulunamadı.", 404);
 
             return Success(ContractModel.DtoToModel(contract));
+        }
+
+        // GET: api/Contract/GetExpiringContracts
+        [HttpGet("GetExpiringContracts")]
+        public IActionResult GetExpiringContracts()
+        {
+            List<Contract> contracts = contractService.GetList();
+
+            if (contracts == null || contracts.Count == 0) return Error("Eşleşen kayıt bulunamadı.", 404);
+
+            List<ContractModel> oneWeekContracts = new List<ContractModel>();
+            List<ContractModel> oneMonthContracts = new List<ContractModel>();
+            List<ContractModel> twoMonthContracts = new List<ContractModel>();
+
+            contracts.ForEach(x => {
+
+                if(x.FinishDate < DateTime.Now.AddDays(7))
+                {
+                    oneWeekContracts.Add(ContractModel.DtoToModel(x));
+                }
+                else if (x.FinishDate < DateTime.Now.AddMonths(1))
+                {
+                    oneMonthContracts.Add(ContractModel.DtoToModel(x));
+                }
+                else if (x.FinishDate < DateTime.Now.AddMonths(2))
+                {
+                    twoMonthContracts.Add(ContractModel.DtoToModel(x));
+                }
+            });
+
+            return Success(new { oneWeek = oneWeekContracts.Count, oneMonth = oneWeekContracts.Count, twoMonth = twoMonthContracts.Count, total = contracts.Count });
         }
 
         // GET: api/Contract/GetContractsByClient/clientId
